@@ -13,16 +13,13 @@ export default class App extends Component {
     this.state = {
       id: "",
       password: "",
-      fontsLoaded: true,
+      fontsLoaded: false,
     };
   }
 
   async loadFonts() {
     await Font.loadAsync({
-      // Load a font `Montserrat` from a static resource
       My: require('../assets/fonts/BinggraeSamanco.ttf'),
-
-      // Any string can be used as the fontFamily name. Here we use an object to provide more control
       'Mybold': {
         uri: require('../assets/fonts/BinggraeSamanco-Bold.ttf'),
         display: Font.FontDisplay.FALLBACK,

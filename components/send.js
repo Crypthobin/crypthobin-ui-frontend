@@ -9,8 +9,6 @@ import Modal from 'react-native-simple-modal';
 import Checkbox from 'expo-checkbox';
 import addressData from "../data/addressData";
 import walletData from "../data/walletData";
-import { CurrentRenderContext } from "@react-navigation/core";
-import { borderColor } from "styled-system";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -25,24 +23,49 @@ for (var i=0; i<addressData.length; i++){
   pickerData.push(aJson);
 }
 
-  export default class App extends Component {
-    constructor(props) {
-      super(props);
+export default class App extends Component {
+  constructor(props) {
+    super(props);
 
-      this.state = {
-        name: pickerData[0].label,
-        address: pickerData[0].value,
-        amount: 0,
-        balance: walletData.balance,
-        ss: false,
-        open: false,
-        select: false,
-      };
-    }
+    this.state = {
+      name: "",
+      address: "",
+      amount: 0,
+      balance: walletData.balance,
+      open: false,
+      select: false,
+    };
+  }
     
-
-    checkAddress = () => {
+  checkInput = () => {
+    const send = {
+      address: this.state.address,
+      amount: this.state.amount,
+      balance: this.state.balance,
+      };
+      if (!send.address || !send.amount) {
+      alert("모두 입력해주세요");
+      return;
+      }
+      if (send.address.length != 43){
+        alert("올바른 주소를 입력해주세요.");
+      return;
+      }
+      if (send.balance < 0) {
+        alert("송금액은 내 잔액을 초과할 수 없습니다.");
+        return;
+      }
+      if (this.state.select == true){
+        this.state.name = "(저장되지 않은 주소)";
+      }
       this.setState({open: true});
+    };
+
+    onSend(){
+      // 송금 프로세스
+      // ...
+      // 모달 창 닫기
+      this.setState({open: false});
     };
     
     render(){
@@ -58,7 +81,7 @@ for (var i=0; i<addressData.length; i++){
       <View style={styles.header}>
         <Text style={styles.logoText}
         onPress={() => {
-          navigation.navigate("Wallet_main");
+          this.props.navigation.navigate("Wallet_main");
         }}>밥 그릇</Text>
         <IconButton 
         style={{marginRight:"5%",}}
@@ -68,17 +91,15 @@ for (var i=0; i<addressData.length; i++){
         /> 
         )} 
         onPress={() => {
-        navigation.navigate("App_info");}}
+          this.props.navigation.navigate("App_info");}}
     /> 
       </View>
         <Text style={styles.header2}>
         송금하기</Text>
         <View style={styles.formArea}>
-        
         <View style={{flexDirection:"row", paddingBottom:"3%"}}>
         <Text style={styles.header3}>
         보낼 주소</Text>
-        
         <Checkbox
           style={{marginRight: "2%", marginTop:"1%", marginLeft:"20%"}}
           value={this.state.select}
@@ -86,24 +107,18 @@ for (var i=0; i<addressData.length; i++){
           color={this.state.select ? 'orange' : undefined}
         />
         <Text style={{fontFamily:"My", fontSize:20, marginTop:"0.5%",}}>직접 입력</Text>
-
         </View>
-
         { this.state.select &&
         <TextInput 
                         style={styles.textForm} 
-                        placeholder={"pqc1qyau3w0qkv4v3rla6fq5enjy4yhs23mrhyw7sde"}
+                        placeholder={"ex) pqc1qyau3w0qkv4v3rla6fq5enjy4yhs23mrhyw7sde"}
                         returnKeyType="done"
+                        maxLength="43"
                         onChangeText={(value) => {
                           this.setState({
                             address: value,
-                          });
-                          }
-                        }
+                          });}}
                         />}
-
-
-
         { !(this.state.select) &&
         <RNPickerSelect
             placeholder={placeholder}
@@ -121,7 +136,6 @@ for (var i=0; i<addressData.length; i++){
                 right: "13%",
               },
             }}
-           
             value={this.state.address}
             useNativeAndroidPickerStyle={false}
             textInputProps={{ underlineColor: 'yellow' }}
@@ -150,26 +164,30 @@ for (var i=0; i<addressData.length; i++){
                         }
                         />
                    
-                
-        <Text style={styles.header4}>
-                  (송금 후 잔액: {this.state.balance} TOL)</Text>
-    
+        <Text style={ (this.state.balance<0)? {color:"red", fontSize: 22,
+    alignSelf: "flex-end",
+    marginTop:"10%",
+    paddingTop: "3%",
+    paddingBottom: "5%",
+    paddingHorizontal: "10%",
+    fontFamily: "Mybold",} : {color:"orange", fontSize: 22,
+    alignSelf: "flex-end",
+    marginTop:"10%",
+    paddingTop: "3%",
+    paddingBottom: "5%",
+    paddingHorizontal: "10%",
+    fontFamily: "Mybold",}
+        }>(송금 후 잔액: {this.state.balance} TOL)</Text>
                 </View>
-
-
                 <View style={styles.buttonArea}>
-
                 <IconButton size={50}
-                onPress={this.checkAddress}
+                onPress={this.checkInput}
         style={{ alignSelf: "center"}}
           icon={() => (
                 <MaterialCommunityIcons name="send-circle" size={70} color="orange"
                  />
                 )} 
-                
             /> 
-
-          
           </View>
       </View>
       <Modal
@@ -185,17 +203,14 @@ for (var i=0; i<addressData.length; i++){
           <Text style={styles.header7}>{this.state.amount} TOL을 송금하시겠습니까?</Text>    
           <Text style={styles.header8}>잘못된 주소일 경우, 거래를 되돌릴 수 없습니다.</Text>
             <View style = {{flexDirection: "column",alignSelf:"center"}}>
-          
-          
           <View style = {{width:"60%", alignSelf:"center", marginBottom:"5%", borderRadius:5,
     borderWidth:2,
     backgroundColor:"orange",}}>
           <TouchableOpacity
-            onPress={() => this.setState({open: false})}>
+            onPress={this.onSend.bind(this)}>
             <Text style={styles.header9}>송금하기</Text>
           </TouchableOpacity>
           </View>
-          
           <View style = {{width:"60%", alignSelf:"center", borderRadius:5,
     borderWidth:2,
     backgroundColor:"gray",}}>
@@ -204,16 +219,11 @@ for (var i=0; i<addressData.length; i++){
             <Text style={styles.header9}>돌아가기</Text>
           </TouchableOpacity>
           </View>
-
-
-
           </View>
-
         </View>
       </Modal>    
       </NativeBaseProvider>
   );}
-
 }
 
 const styles = StyleSheet.create({
@@ -403,5 +413,3 @@ const pickerSelectStyles = StyleSheet.create({
     
   },
 });
-
-//export default Page2;
