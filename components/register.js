@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { Text, Alert, View, StyleSheet, Dimensions, TextInput } from "react-native";
-import { Container, Item, Form, Input, Label, Button,CheckBox, AsyncStorage, NativeBaseProvider } from "native-base";
-import * as Font from 'expo-font';
+import { Text, View, StyleSheet, Dimensions, TextInput } from "react-native";
+import { Button, NativeBaseProvider } from "native-base";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -19,76 +18,26 @@ export default class App extends Component {
     };
   }
 
-  async loadFonts() {
-    await Font.loadAsync({
-      // Load a font `Montserrat` from a static resource
-      My: require('../assets/fonts/BinggraeSamanco.ttf'),
-
-      // Any string can be used as the fontFamily name. Here we use an object to provide more control
-      'Mybold': {
-        uri: require('../assets/fonts/BinggraeSamanco-Bold.ttf'),
-        display: Font.FontDisplay.FALLBACK,
-      },
-    });
-    this.setState({ fontsLoaded: true });
-  }
-
-  componentDidMount() {
-    this.loadFonts();
-  }
-//   _post(user) {
-//       return fetch(`../data/account.json`, {
-//         method: "POST",
-//         body: JSON.stringify(user),
-//       })
-//         .then((res) => {
-//           if (res.status != 200) {
-//             throw new Error(res.statusText);
-//           }
-//           return res.json();
-//         })
-//         .then((data) => {
-//           AsyncStorage.setItem('id', this.state.id);
-//           AsyncStorage.setItem('password', this.state.password);
-//           AsyncStorage.setItem('userData', this.state.user);
-//           this.props.navigation.navigate("Create_wallet");
-//         });
-//   }
-
-  handleIdChange = (e) => {
-    this.setState({
-      id: e.target.value,
-    });
-  };
-
-  handlePasswordChange = (e) => {
-    this.setState({ password: e.target.value });
-  };
-
-  handlePasswordConfirmChange = (e) => {
-    this.setState({ password_confirm: e.target.value });
-  };
-
   handleSubmit() {
     const user = {
       id: this.state.id,
       password: this.state.password,
       password_confirm: this.state.password_confirm,
     };
-    // if (!user.id || !user.password || !user.password_confirm) {
-    //   alert("모두 입력해주세요");
-    //   return;
-    // }
-    // else if (user.password_confirm != user.password){
-    //     alert("비밀번호가 일치하지 않습니다.");
-    //   return;
-    // }
-    //this._post(user);
+    if (!user.id || !user.password || !user.password_confirm) {
+      alert("모두 입력해주세요");
+      return;
+    }
+    else if (user.password_confirm != user.password){
+        alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+    //post
+    //...
     this.props.navigation.navigate("Create_wallet");
   }
 
   render() {
-    if (this.state.fontsLoaded) {
     return (
         <NativeBaseProvider>
       <View style={styles.container}>
@@ -113,7 +62,7 @@ export default class App extends Component {
         <TextInput 
            style={styles.textForm}
 		    value={this.state.password} 
-            placeholder={"비밓번호"}
+            placeholder={"비밀번호"}
 		    autoCorrect={false}
 		    onChangeText={(password) => {
               this.setState({ password });
@@ -143,10 +92,7 @@ export default class App extends Component {
       </View>
       </NativeBaseProvider>
     );
-  } else {
-    return null;
   }
-}
 }
 
 const styles = StyleSheet.create({

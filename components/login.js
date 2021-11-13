@@ -1,6 +1,6 @@
-import React, { Component, useState } from "react";
-import { Text, Alert, View, StyleSheet, Dimensions, TextInput } from "react-native";
-import {  NativeBaseProvider, Button } from "native-base";
+import React, { Component } from "react";
+import { Text, View, StyleSheet, Dimensions, TextInput } from "react-native";
+import { NativeBaseProvider, Button } from "native-base";
 import * as Font from 'expo-font';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
@@ -33,59 +33,52 @@ export default class App extends Component {
   }
 
   onLogin = () => {
-      // 로그인 기능 (값 맞는지 확인하는 로직)
-      // 토스트 넣기
-    this.props.navigation.navigate("After"); 
+    // get
+    // ...
+    this.props.navigation.navigate("After");
   };
-
-//   _get() {
-//   }
-
-//   componentDidMount() {
-//     this._get();
-//   }
 
   render() {
     if (this.state.fontsLoaded) {
-    return (
+      return (
         <NativeBaseProvider>
-      <View style={styles.container}>
-        <View>
-        <Text style={styles.title}>밥 그 릇</Text>
-        </View>
+          <View style={styles.container}>
+            <View>
+              <Text style={styles.title}>밥 그 릇</Text>
+            </View>
             <View style={styles.formArea}>
-                    <TextInput 
-                        style={styles.textForm} 
-                        placeholder={"아이디"}/>
-                    <TextInput 
-                        style={styles.textForm} 
-                        secureTextEntry={true}
-                        placeholder={"비밀번호"}/>
-                </View>
-          <View style={styles.buttonArea}>
-            <Button block style={styles.loginButton} 
-                    onPress={this.onLogin}>
-              <Text style={styles.loginText}>로그인</Text>
-            </Button>
-          </View>
-          <Text
-            style={styles.registerText}
-            onPress={() => {
-              this.props.navigation.navigate("Register");
-               //this.props.gotoPage('Register');
-            }}
-          >
-            <Text style={{ color: "black", textDecorationLine: "underline" }}>
-              밥은 먹고 다니냐?
+              <TextInput
+                style={styles.textForm}
+                placeholder={"아이디"} />
+              <TextInput
+                style={styles.textForm}
+                secureTextEntry={true}
+                placeholder={"비밀번호"} />
+            </View>
+            <View style={styles.buttonArea}>
+              <Button block style={styles.loginButton}
+                onPress={this.onLogin}>
+                <Text style={styles.loginText}>로그인</Text>
+              </Button>
+            </View>
+            <Text
+              style={styles.registerText}
+              onPress={() => {
+                this.props.navigation.navigate("Register");
+                //this.props.gotoPage('Register');
+              }}
+            >
+              <Text style={{ color: "black", textDecorationLine: "underline" }}>
+                밥은 먹고 다니냐?
+              </Text>
             </Text>
-          </Text>
-      </View>
-      </NativeBaseProvider>
-    );
-  } else {
-    return null;
+          </View>
+        </NativeBaseProvider>
+      );
+    } else {
+      return null;
+    }
   }
-}
 }
 
 const styles = StyleSheet.create({
@@ -96,7 +89,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 40,
-    //fontWeight: "400",
     marginTop: "50%",
     alignSelf: "center",
     fontFamily: "Mybold",
@@ -107,22 +99,22 @@ const styles = StyleSheet.create({
     marginTop: "10%",
     paddingBottom: '10%',
     alignSelf: "center",
-},
-textForm: {
+  },
+  textForm: {
     borderWidth: 2,
     borderRadius: 5,
     width: '70%',
     height: '40%',
     paddingLeft: "5%",
-    paddingRight:"5%",
+    paddingRight: "5%",
     marginBottom: "5%",
     alignSelf: "center",
     fontFamily: "My",
-},
-buttonArea: {
+  },
+  buttonArea: {
     width: '80%',
     alignSelf: "center",
-},
+  },
   loginButton: {
     borderRadius: 5,
     width: "40%",

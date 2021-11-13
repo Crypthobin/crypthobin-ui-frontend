@@ -1,6 +1,4 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { Text } from "react-native";
 import { createAppContainer } from "react-navigation";
 import Start_navigation from "./components/start_navigation";
 import Bottom_navigation from "./components/bottom_navigation";
@@ -29,7 +27,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Navi/>
+      <Navi />
     </NavigationContainer>
   );
 }
