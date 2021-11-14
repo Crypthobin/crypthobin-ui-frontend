@@ -22,9 +22,9 @@ npm start
 - txDataEmpty.json: 내 트랜잭션이 없을 때 테스트 용.
 - walletData.json: 내 지갑 정보 (address, balance)
 ## 해야 할 것 :relieved:
-[ ] splash 및 아이콘 구성
-[ ] 앱 로딩 시 이미지, 폰트 렌더링 처리
-[ ] 회원 가입 시 아이디, 비밀번호 자릿수 및 문자 포함 기준
-[ ] 주소록 -> 삭제 기능, 예외 처리
-[ ] 다른 탭 이동 시 스택 초기화
-[ ] useNativeDriver
+[] splash 및 아이콘 구성
+[] 앱 로딩 시 이미지, 폰트 렌더링 처리
+[] 회원 가입 시 아이디, 비밀번호 자릿수 및 문자 포함 기준
+[] 주소록 -> 삭제 기능, 예외 처리
+[] 다른 탭 이동 시 스택 초기화
+[] useNativeDriver
