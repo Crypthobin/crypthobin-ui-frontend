@@ -16,6 +16,8 @@
     "bootstrap": "^4.1.1",
     "expo": "~43.0.0",
     "expo-checkbox": "~2.0.0",
+    "expo-image-loader": "^3.0.0",
+    "expo-splash-screen": "~0.13.5",
     "expo-status-bar": "~1.1.0",
     "native-base": "^3.2.1",
     "react": "17.0.1",

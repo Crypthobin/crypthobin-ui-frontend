@@ -1,33 +1,59 @@
-import React from 'react';
-import { createAppContainer } from "react-navigation";
-import Start_navigation from "./components/start_navigation";
-import Bottom_navigation from "./components/bottom_navigation";
-import { createStackNavigator } from "react-navigation-stack";
-import { NavigationContainer } from "@react-navigation/native";
-
-const temp = createStackNavigator(
-  {
-    Before: {
-      screen: Start_navigation,
-      navigationOptions: { headerShown: false },
-    },
-    After: {
-      screen: Bottom_navigation,
-      navigationOptions: { headerShown: false },
-    },
-  },
-  {
-    initialRouteName: "Before",
-  }
-);
+import React, {useState, useCallback, useEffect} from 'react';
+import * as SplashScreen from 'expo-splash-screen';
+import { View, Dimensions, Text } from 'react-native';
+import { Entypo } from '@expo/vector-icons';
+import * as Font from 'expo-font';
+const screenWidth = Math.round(Dimensions.get("window").width);
+const screenHeight = Math.round(Dimensions.get("window").height);
+import Start from './components/start';
+import { Asset } from 'expo-asset';
 
 export default function App() {
 
-  const Navi = createAppContainer(temp);
+  const [appIsReady, setAppIsReady] = useState(false);
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        await SplashScreen.preventAutoHideAsync();
+
+        await Asset.loadAsync([
+          require('./images/sot.png'),      
+        ]);
+        
+        await Font.loadAsync({
+          My: require('./assets/fonts/BinggraeSamanco.ttf'),
+          'Mybold': {
+            uri: require('./assets/fonts/BinggraeSamanco-Bold.ttf'),
+            display: Font.FontDisplay.FALLBACK,
+          },
+        });
+        
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
+      }
+    }
+    prepare();
+  }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+
+  if (!appIsReady) {
+    return null;
+  }
 
   return (
-    <NavigationContainer>
-      <Navi />
-    </NavigationContainer>
+    <View
+      style={{height: screenHeight, backgroundColor:"blue" }}
+      onLayout={onLayoutRootView}>
+      <Start/>
+    </View>
   );
 }
