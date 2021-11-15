@@ -15,7 +15,7 @@ npm start
 ```
 ## 더미 데이터 목록
 *(경로: .../crypthobin-ui-frontend/data/...)*
-- addressData.json: 내 주소록 목록 (name, address)
+- addressData.json: 내 주소록 목록 (name, address. isDel)
 - blockData.json: 블록 목록 (index, miner, age, tx_num, reward)
 - networkData.json: 블록체인 네트워크 정보 (user_num, block_num)
 - txData.json: 내 트랜잭션 목록 (type, address, date, amount)
