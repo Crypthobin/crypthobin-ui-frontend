@@ -7,7 +7,6 @@ import { ScrollView } from "react-native-gesture-handler";
 import { IconButton } from 'react-native-paper';
 import Modal from 'react-native-simple-modal';
 import { Feather } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -17,24 +16,67 @@ const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
 
 var check_data = [];
-for (var i=0; i<addressData.length; i++){
+var false_data = [];
+for (var i = 0; i < addressData.length; i++) {
   check_data[i] = false;
+  false_data[i] = false;
 }
+
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
+      friend: {},
+      name: "",
+      address: "",
+      open_add: false,
       edit: false,
       check: check_data,
+      open_del: false,
     };
+  }
 
-  }
-  testFunc = (i) => {
+  checkDel = (i) => {
     check_data[i] = !check_data[i];
-    // check_data[i]를 isDel에 넣어야 함.
-    this.setState({check: check_data});
+    addressData[i].isDel = check_data[i];
+    this.setState({ check: check_data });
   }
+
+  onDel() {
+    for (var i = 0; i < check_data.length; i++) {
+      check_data[i] = false;
+    }
+    this.setState({ open_del: false })
+    this.setState({ edit: false })
+  }
+
+  onAdd() {
+    const friend = {
+      name: this.state.name,
+      address: this.state.address,
+    };
+    if (!friend.name || !friend.address) {
+      alert("모두 입력해주세요");
+      return;
+    }
+    // 잠시 주석
+    // if (friend.address.length != 43) {
+    //   alert("주소를 다시 한 번 확인해주세요.");
+    //   return;
+    // }
+    // post
+    // ...
+    this.setState({ open_add: false });
+  }
+
+  onReset() {
+    for (var i = 0; i < addressData.length; i++) {
+      check_data[i] = false;
+      addressData[i].isDel = false;
+    }
+    this.setState({ edit: false });
+  }
+
   render() {
     return (
       <NativeBaseProvider>
@@ -63,98 +105,107 @@ export default class App extends Component {
           }}>
             <Text style={styles.header2}>
               주소록</Text>
-              <IconButton size={23}
-              style={{ marginLeft: "46%", marginTop:"3%" }}
+            <IconButton size={30}
+              style={{ marginLeft: "42%", marginTop: "3%" }}
               icon={() => {
-                if (!this.state.edit){
-                  return(
-                <Feather name="edit-2" size={25} color="black" />
-                  );} else return(
-                    <Text style ={{fontFamily:"Mybold", fontSize:"25"}}>취소</Text>
+                if (!this.state.edit) {
+                  return (
+                    <Feather name="edit-2" size={25} color="black" />
                   );
-              }}
-              onPress={() => {
-                //this.setState({ open: true })
-                if (!this.state.edit){
-                this.setState({ edit: true })
-                } else {
-                  this.setState({ edit: false })
-                }
-              }} 
-            />
-            <IconButton size={25}
-            style={{ marginTop:"3%" }}
-              icon={() => {
-                if (!this.state.edit){
-                  return(
-                    <MaterialIcons name="person-add-alt" size={30} color="black" />
-               
-                );} else return(
-                  <Ionicons name="trash-bin" size={25} color="black" />
+                } else return (
+                  <Text style={{ fontFamily: "Mybold", fontSize: "25" }}>취소</Text>
                 );
               }}
               onPress={() => {
-                if (!this.state.edit){
-                this.setState({ open: true })
+                if (!this.state.edit) {
+                  this.setState({ edit: true })
+                } else {
+                  this.onReset();
                 }
               }}
             />
+            <IconButton size={30}
+              style={{ marginTop: "3%" }}
+              icon={() => {
+                var count = 0;
+                if (!this.state.edit) {
+                  return (
+                    <MaterialIcons name="person-add-alt" size={30} color="black" />
+                  );
+                } else {
 
+                  for (i = 0; i < this.state.check.length; i++) {
+                    if (this.state.check[i]) {
+                      count += 1;
+                    }
+                  }
+                  return (
+                    <View style={{ flexDirection: "row" }}>
+                      <Ionicons name="trash-bin" size={25} color="orange" />
+                      <Text style={{ marginTop: "30%", color: "orange", fontFamily: "Mybold", fontSize: "15" }}>({count})</Text>
+                    </View>
+                  );
+                }
+              }}
+              onPress={() => {
+                if (!this.state.edit) {
+                  this.setState({ open_add: true })
+                } else {
+                  if (JSON.stringify(this.state.check) != JSON.stringify(false_data)) {
+                    this.setState({ open_del: true });
+                  } else {
+                    alert("삭제할 주소를 선택해주세요.");
+                  }
+                }
+              }}
+            />
           </View>
           <ScrollView>
             <View style={styles.container3}>
               {addressData.map((card, i) => {
                 if (this.state.edit) {
                   return (
-                    <View style={{flexDirection:"row", justifyContent: "space-between", paddingLeft:"5%"}}>
-                    <View style={styles.shortCardContainer} key={i}>
-                      <View style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        padding: "2%",
-                      }}>
-                        {//<Ionicons name="ios-person-circle" size={60} color="orange" />
-                }
-                        <View
-                          style={{
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            padding: "2%",
-                          }}
-                        >
-                          <View style={styles.name}>
-                            <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.name}</Text>
-                          </View>
-                          <View style={styles.address}>
-                            <Text style={{ fontSize: 15, fontFamily: "My", }}>
-                              {card.address}
-                            </Text>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", paddingLeft: "5%" }}>
+                      <View style={styles.shortCardContainer} key={i}>
+                        <View style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          padding: "2%",
+                        }}>
+                          <View
+                            style={{
+                              flexDirection: "column",
+                              justifyContent: "space-between",
+                              padding: "2%",
+                            }}
+                          >
+                            <View style={styles.name}>
+                              <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.name}</Text>
+                            </View>
+                            <View style={styles.address}>
+                              <Text style={{ fontSize: 15, fontFamily: "My", }}>
+                                {card.address}
+                              </Text>
+                            </View>
                           </View>
                         </View>
                       </View>
-                    </View>
-            <IconButton size={45}
-            style={{marginTop:"2%"}}
-              icon={() => {
-                if (this.state.check[i]){
-                return(
-    
-                <FontAwesome name="check-circle" size={30} color="black" />
-           
-                );}
-                else return(
-                  
-                  <FontAwesome name="circle-o" size={30} color="black" />
-                );
-              }
-          
-                }
-              onPress={ 
-                () => this.testFunc(i)
-              }
-            />       
-       
-                    
+                      <IconButton size={45}
+                        style={{ marginTop: "2%" }}
+                        icon={() => {
+                          if (this.state.check[i]) {
+                            return (
+                              <FontAwesome name="check-circle" size={30} color="orange" />
+                            );
+                          }
+                          else return (
+                            <FontAwesome name="circle-o" size={30} color="black" />
+                          );
+                        }}
+                        onPress={
+                          () => this.checkDel(i)
+                        }
+                      />
                     </View>
                   );
                 } else {
@@ -191,9 +242,9 @@ export default class App extends Component {
           </ScrollView>
           <Modal
             offset={this.state.offset}
-            open={this.state.open}
+            open={this.state.open_add}
             modalDidOpen={() => console.log('modal did open')}
-            modalDidClose={() => this.setState({ open: false })}
+            modalDidClose={() => this.setState({ open_add: false })}
             modalStyle={styles.modal}
           >
             <View style={styles.modal}>
@@ -203,17 +254,55 @@ export default class App extends Component {
                   이름</Text>
                 <TextInput
                   style={styles.textForm}
+                  value={this.state.name}
+                  onChangeText={(name) => {
+                    this.setState({ name });
+                  }}
                   placeholder={"ex) 이승아"} />
                 <Text style={styles.header4}>
                   주소</Text>
                 <TextInput
                   style={styles.textForm}
+                  value={this.state.address}
+                  onChangeText={(address) => {
+                    this.setState({ address });
+                  }}
                   placeholder={"ex) pqc1 ... "} />
               </View>
               <TouchableOpacity
                 style={{ margin: 5 }}
-                onPress={() => this.setState({ open: false })}>
-                <Text style={styles.header3}>완료</Text>
+                onPress={() => { this.onAdd(); }}>
+                <Text style={styles.header3}>추가</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+          <Modal
+            offset={this.state.offset}
+            open={this.state.open_del}
+            modalDidOpen={() => console.log('modal did open')}
+            modalDidClose={() => this.setState({ open_del: false })}
+            modalStyle={styles.modal2}
+          >
+            <View >
+              <Text style={{ fontSize: 23, fontFamily: "Mybold", paddingTop: "10%", paddingBottom: "10%" }}>아래 주소를 삭제하시겠습니까?</Text>
+              <View style={{ height: "40%" }}>
+                <ScrollView>
+                  {addressData.map((card) => {
+                    if (card.isDel) {
+                      return (
+                        <Text style={{ fontFamily: "My", fontSize: "25", marginBottom: "3%" }}>{card.name}</Text>
+                      );
+                    }
+                  })}
+                </ScrollView>
+              </View>
+              <TouchableOpacity
+                style={{ margin: 5 }}
+                onPress={() => {
+                  this.onDel();
+
+                }}>
+                <Text style={styles.header33}>삭제</Text>
               </TouchableOpacity>
             </View>
           </Modal>
@@ -314,6 +403,14 @@ const styles = StyleSheet.create({
     padding: "3%",
     backgroundColor: "white"
   },
+  modal2: {
+    alignSelf: "center",
+    alignItems: 'center',
+    width: "75%",
+    height: "42%",
+    padding: "3%",
+    backgroundColor: "white"
+  },
   header5: {
     fontSize: 35,
     alignSelf: "center",
@@ -326,6 +423,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingTop: "20%",
     paddingBottom: "20%",
+    fontFamily: "My",
+  },
+  header33: {
+    fontSize: 25,
+    alignSelf: "center",
+    paddingTop: "5%",
+    paddingBottom: "10%",
     fontFamily: "My",
   },
   header4: {
