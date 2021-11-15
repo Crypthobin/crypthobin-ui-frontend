@@ -6,21 +6,35 @@ import { Ionicons } from '@expo/vector-icons';
 import { ScrollView } from "react-native-gesture-handler";
 import { IconButton } from 'react-native-paper';
 import Modal from 'react-native-simple-modal';
+import { Feather } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 
 import addressData from "../data/addressData";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
 
+var check_data = [];
+for (var i=0; i<addressData.length; i++){
+  check_data[i] = false;
+}
 export default class App extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       open: false,
+      edit: false,
+      check: check_data,
     };
-  }
 
+  }
+  testFunc = (i) => {
+    check_data[i] = !check_data[i];
+    // check_data[i]를 isDel에 넣어야 함.
+    this.setState({check: check_data});
+  }
   render() {
     return (
       <NativeBaseProvider>
@@ -46,50 +60,132 @@ export default class App extends Component {
             flexDirection: "row",
             justifyContent: "flex-start",
             width: screenWidth
-
           }}>
             <Text style={styles.header2}>
               주소록</Text>
-            <IconButton size={30}
-              style={{ marginLeft: "55%", }}
-              icon={() => (
-                <Ionicons name="ios-person-add-outline" size={33} color="black" style={{ alignSelf: "center", paddingTop: "0.5%" }} />
-              )}
+              <IconButton size={23}
+              style={{ marginLeft: "46%", marginTop:"3%" }}
+              icon={() => {
+                if (!this.state.edit){
+                  return(
+                <Feather name="edit-2" size={25} color="black" />
+                  );} else return(
+                    <Text style ={{fontFamily:"Mybold", fontSize:"25"}}>취소</Text>
+                  );
+              }}
               onPress={() => {
+                //this.setState({ open: true })
+                if (!this.state.edit){
+                this.setState({ edit: true })
+                } else {
+                  this.setState({ edit: false })
+                }
+              }} 
+            />
+            <IconButton size={25}
+            style={{ marginTop:"3%" }}
+              icon={() => {
+                if (!this.state.edit){
+                  return(
+                    <MaterialIcons name="person-add-alt" size={30} color="black" />
+               
+                );} else return(
+                  <Ionicons name="trash-bin" size={25} color="black" />
+                );
+              }}
+              onPress={() => {
+                if (!this.state.edit){
                 this.setState({ open: true })
+                }
               }}
             />
+
           </View>
           <ScrollView>
             <View style={styles.container3}>
               {addressData.map((card, i) => {
-                return (
-                  <View style={styles.cardContainer} key={i}>
-                    <View style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      padding: "2%",
-                    }}>
-                      <Ionicons name="ios-person-circle" size={60} color="orange" />
-                      <View
-                        style={{
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          padding: "2%",
-                        }}
-                      >
-                        <View style={styles.name}>
-                          <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.name}</Text>
-                        </View>
-                        <View style={styles.address}>
-                          <Text style={{ fontSize: 15, fontFamily: "My", }}>
-                            {card.address}
-                          </Text>
+                if (this.state.edit) {
+                  return (
+                    <View style={{flexDirection:"row", justifyContent: "space-between", paddingLeft:"5%"}}>
+                    <View style={styles.shortCardContainer} key={i}>
+                      <View style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        padding: "2%",
+                      }}>
+                        {//<Ionicons name="ios-person-circle" size={60} color="orange" />
+                }
+                        <View
+                          style={{
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            padding: "2%",
+                          }}
+                        >
+                          <View style={styles.name}>
+                            <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.name}</Text>
+                          </View>
+                          <View style={styles.address}>
+                            <Text style={{ fontSize: 15, fontFamily: "My", }}>
+                              {card.address}
+                            </Text>
+                          </View>
                         </View>
                       </View>
                     </View>
-                  </View>
+            <IconButton size={45}
+            style={{marginTop:"2%"}}
+              icon={() => {
+                if (this.state.check[i]){
+                return(
+    
+                <FontAwesome name="check-circle" size={30} color="black" />
+           
+                );}
+                else return(
+                  
+                  <FontAwesome name="circle-o" size={30} color="black" />
                 );
+              }
+          
+                }
+              onPress={ 
+                () => this.testFunc(i)
+              }
+            />       
+       
+                    
+                    </View>
+                  );
+                } else {
+                  return (
+                    <View style={styles.cardContainer} key={i}>
+                      <View style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        padding: "2%",
+                      }}>
+                        <Ionicons name="ios-person-circle" size={60} color="orange" />
+                        <View
+                          style={{
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            padding: "2%",
+                          }}
+                        >
+                          <View style={styles.name}>
+                            <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.name}</Text>
+                          </View>
+                          <View style={styles.address}>
+                            <Text style={{ fontSize: 15, fontFamily: "My", }}>
+                              {card.address}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    </View>
+                  );
+                }
               })}
             </View>
           </ScrollView>
@@ -190,6 +286,15 @@ const styles = StyleSheet.create({
     alignContent: "center",
     backgroundColor: "white",
     width: "90%",
+    borderWidth: 2,
+    borderRadius: 10,
+    marginBottom: "2%",
+    borderColor: "black"
+  },
+  shortCardContainer: {
+    alignContent: "center",
+    backgroundColor: "white",
+    width: "77%",
     borderWidth: 2,
     borderRadius: 10,
     marginBottom: "2%",

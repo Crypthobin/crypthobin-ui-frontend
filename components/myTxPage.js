@@ -7,8 +7,8 @@ import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from '@expo/vector-icons';
 import { IconButton } from 'react-native-paper';
 
-import txData from '../data/txDataEmpty'; 
-// import txData from '../data/txData'; 
+//import txData from '../data/txDataEmpty'; 
+import txData from '../data/txData'; 
 import addressData from '../data/addressData';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
