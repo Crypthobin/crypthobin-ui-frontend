@@ -18,7 +18,9 @@ export default function App() {
         await SplashScreen.preventAutoHideAsync();
 
         await Asset.loadAsync([
-          require('./images/sot.png'),      
+          require('./images/sot.png'),
+          require('./images/bob.png'),
+          require('./images/test.png'),      
         ]);
         
         await Font.loadAsync({

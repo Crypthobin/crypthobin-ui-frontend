@@ -45,6 +45,7 @@ export default class App extends Component {
               style={styles.textForm}
               value={this.state.wallet_name}
               placeholder={"지갑 이름"}
+              maxLength="14"
               autoCorrect={false}
               onChangeText={(wallet_name) => {
                 this.setState({ wallet_name });
@@ -106,12 +107,13 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 5,
     fontFamily: "My",
+    fontSize: 18,
   },
   register_btn: {
-    borderRadius: 10,
+    borderRadius: 5,
     marginTop: "10%",
     width: "40%",
-    backgroundColor: "black",
+    backgroundColor: "orange",
     alignSelf: "center",
     fontFamily: "My",
   },
@@ -119,7 +121,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: "5%",
     color: "white",
-    fontSize: 15,
+    fontSize: 18,
     fontFamily: "Mybold",
   },
 });

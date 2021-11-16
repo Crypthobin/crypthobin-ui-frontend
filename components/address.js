@@ -6,7 +6,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { ScrollView } from "react-native-gesture-handler";
 import { IconButton } from 'react-native-paper';
 import Modal from 'react-native-simple-modal';
-import { Feather } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -59,11 +58,10 @@ export default class App extends Component {
       alert("모두 입력해주세요");
       return;
     }
-    // 잠시 주석
-    // if (friend.address.length != 43) {
-    //   alert("주소를 다시 한 번 확인해주세요.");
-    //   return;
-    // }
+    if (friend.address.length != 43) {
+      alert("주소를 다시 한 번 확인해주세요.");
+      return;
+    }
     // post
     // ...
     this.setState({ open_add: false });
@@ -110,7 +108,7 @@ export default class App extends Component {
               icon={() => {
                 if (!this.state.edit) {
                   return (
-                    <Feather name="edit-2" size={25} color="black" />
+                    <Ionicons name="trash-bin" size={25} color="black" />
                   );
                 } else return (
                   <Text style={{ fontFamily: "Mybold", fontSize: "25" }}>취소</Text>
@@ -195,11 +193,13 @@ export default class App extends Component {
                         icon={() => {
                           if (this.state.check[i]) {
                             return (
-                              <FontAwesome name="check-circle" size={30} color="orange" />
+                              //<FontAwesome name="check-circle" size={30} color="orange" />
+                              <FontAwesome name="check-square" size={25} color="orange" />
                             );
                           }
                           else return (
-                            <FontAwesome name="circle-o" size={30} color="black" />
+                            //<FontAwesome name="circle-o" size={30} color="black" />
+                            <FontAwesome name="square-o" size={25} color="black" />
                           );
                         }}
                         onPress={
@@ -248,19 +248,20 @@ export default class App extends Component {
             modalStyle={styles.modal}
           >
             <View style={styles.modal}>
-              <Text style={styles.header5}>주소 추가하기</Text>
+              <FontAwesome name="address-card" size={60} color="orange" />
               <View style={styles.formArea}>
                 <Text style={styles.header4}>
-                  이름</Text>
+                  이름을 정해주세요.</Text>
                 <TextInput
                   style={styles.textForm}
                   value={this.state.name}
+                  maxLength="15"
                   onChangeText={(name) => {
                     this.setState({ name });
                   }}
-                  placeholder={"ex) 이승아"} />
+                  placeholder={"15자까지 입력 가능"} />
                 <Text style={styles.header4}>
-                  주소</Text>
+                  주소를 입력해주세요.</Text>
                 <TextInput
                   style={styles.textForm}
                   value={this.state.address}
@@ -270,9 +271,9 @@ export default class App extends Component {
                   placeholder={"ex) pqc1 ... "} />
               </View>
               <TouchableOpacity
-                style={{ margin: 5 }}
+                style={styles.small_btn}
                 onPress={() => { this.onAdd(); }}>
-                <Text style={styles.header3}>추가</Text>
+                <Text style={styles.small_text}>추가하기</Text>
               </TouchableOpacity>
             </View>
           </Modal>
@@ -283,28 +284,27 @@ export default class App extends Component {
             modalDidClose={() => this.setState({ open_del: false })}
             modalStyle={styles.modal2}
           >
-            <View >
-              <Text style={{ fontSize: 23, fontFamily: "Mybold", paddingTop: "10%", paddingBottom: "10%" }}>아래 주소를 삭제하시겠습니까?</Text>
-              <View style={{ height: "40%" }}>
-                <ScrollView>
-                  {addressData.map((card) => {
-                    if (card.isDel) {
-                      return (
-                        <Text style={{ fontFamily: "My", fontSize: "25", marginBottom: "3%" }}>{card.name}</Text>
-                      );
-                    }
-                  })}
-                </ScrollView>
-              </View>
-              <TouchableOpacity
-                style={{ margin: 5 }}
-                onPress={() => {
-                  this.onDel();
-
-                }}>
-                <Text style={styles.header33}>삭제</Text>
-              </TouchableOpacity>
+            <MaterialCommunityIcons name="account-multiple-remove" size={60} color="orange" />
+            <Text style={{ fontSize: 23, fontFamily: "Mybold", paddingTop: "10%", paddingBottom: "10%" }}>아래 주소를 삭제하시겠습니까?</Text>
+            <View style={{ width: "80%", height: "30%", backgroundColor: "#FFE5CC", padding: "3%", borderRadius: 10 }}>
+              <ScrollView>
+                {addressData.map((card) => {
+                  if (card.isDel) {
+                    return (
+                      <Text style={{ fontFamily: "My", fontSize: "20", marginBottom: "3%", marginLeft: "5%" }}>{card.name}</Text>
+                    );
+                  }
+                })}
+              </ScrollView>
             </View>
+            <TouchableOpacity
+              style={styles.small_btn}
+              onPress={() => {
+                this.onDel();
+
+              }}>
+              <Text style={styles.small_text}>삭제</Text>
+            </TouchableOpacity>
           </Modal>
         </View>
       </NativeBaseProvider>
@@ -398,18 +398,21 @@ const styles = StyleSheet.create({
   modal: {
     alignSelf: "center",
     alignItems: 'center',
-    width: "80%",
+    width: "85%",
     height: "60%",
-    padding: "3%",
-    backgroundColor: "white"
+    padding: "5%",
+    backgroundColor: "white",
+    borderRadius: 15,
   },
   modal2: {
     alignSelf: "center",
     alignItems: 'center',
-    width: "75%",
-    height: "42%",
-    padding: "3%",
-    backgroundColor: "white"
+    width: "85%",
+    height: "60%",
+    padding: "5%",
+    paddingTop: "10%",
+    backgroundColor: "white",
+    borderRadius: 15
   },
   header5: {
     fontSize: 35,
@@ -433,10 +436,10 @@ const styles = StyleSheet.create({
     fontFamily: "My",
   },
   header4: {
-    fontSize: 25,
-    alignSelf: "flex-start",
-    paddingTop: "5%",
-    paddingBottom: "2%",
+    fontSize: 23,
+    alignSelf: "center",
+    paddingTop: "8%",
+    paddingBottom: "4%",
     fontFamily: "My",
   },
   formArea: {
@@ -450,7 +453,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 5,
     width: '100%',
-    height: '25%',
+    height: '20%',
     paddingLeft: "5%",
     paddingRight: "5%",
     marginBottom: "1%",
@@ -458,4 +461,19 @@ const styles = StyleSheet.create({
     fontFamily: "My",
     fontSize: 18,
   },
+  small_btn: {
+    alignSelf: "center",
+    marginTop: "10%",
+    padding: "2%",
+    paddingHorizontal: "20%",
+    fontSize: 25,
+    backgroundColor: "orange",
+    borderRadius: 5,
+  },
+  small_text: {
+    alignSelf: "center",
+    fontSize: 25,
+    fontFamily: "My",
+    color: "white",
+  }
 });

@@ -58,15 +58,13 @@ export default class App extends Component {
             />
           </View>
           <Text style={styles.header2}>
-            내 지갑</Text>
+            {walletData.name}</Text>
           <View style={styles.container2}>
             <ImageBackground
               style={styles.image}
               source={require("../images/sot.png")}>
               <Text style={styles.logo2} >Crypthobin PQC Wallet</Text>
-
               <Text style={styles.logo3} > {walletData.balance} TOL</Text>
-
               <IconButton size={70}
                 style={{ marginLeft: "79%", paddingBottom: "15%" }}
                 icon={() => (
@@ -87,10 +85,8 @@ export default class App extends Component {
             modalDidClose={() => this.setState({ open: false })}
             modalStyle={styles.modal}
           >
-            <View style={styles.modal}>
-              <Text style={styles.header5}>내 주소</Text>
-              <Text style={styles.header4} >{walletData.address}</Text>
-              <View>
+            <View style={{ alignItems: "center", width: "100%" }}>
+              <View style={{ borderWidth: 1, borderColor: "orange" }}>
                 <QRCode content='https://reactnative.com'
                   outerEyeStyle='circle'
                   codeStyle='circle'
@@ -99,10 +95,14 @@ export default class App extends Component {
                   size='200'
                 />
               </View>
+              <View style={{ backgroundColor: "#FFE5CC", borderRadius: 5, marginVertical: "3%" }}>
+                <Text style={styles.header4} >{walletData.address}</Text>
+              </View>
               <TouchableOpacity
-                style={{ margin: 5 }}
                 onPress={() => this.setState({ open: false })}>
-                <Text style={styles.header3}>닫기</Text>
+                <View style={styles.small_btn}>
+                  <Text style={styles.small_text}>닫기</Text>
+                </View>
               </TouchableOpacity>
             </View>
           </Modal>
@@ -207,16 +207,17 @@ const styles = StyleSheet.create({
     fontFamily: "My",
   },
   header4: {
-    fontSize: 22,
+    fontSize: 17,
     alignSelf: "center",
-    paddingTop: "3%",
-    paddingBottom: "10%",
+    padding: "3%",
     fontFamily: "My",
-    textAlign: "center"
+    textAlign: "center",
+    color: "black"
   },
-  header5: {
-    fontSize: 35,
-    alignSelf: "center",
+  small_header: {
+    fontSize: 25,
+    alignSelf: "flex-start",
+    paddingLeft: "5%",
     paddingTop: "3%",
     paddingBottom: "3%",
     fontFamily: "Mybold",
@@ -262,8 +263,26 @@ const styles = StyleSheet.create({
   modal: {
     alignSelf: "center",
     alignItems: 'center',
-    width: "80%",
-    height: "70%",
-    backgroundColor: "white"
+    width: "90%",
+    height: "60%",
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: "5%",
+    paddingTop: "10%"
+  },
+  small_btn: {
+    alignSelf: "center",
+    marginTop: "5%",
+    padding: "2%",
+    paddingHorizontal: "20%",
+    fontSize: 25,
+    backgroundColor: "orange",
+    borderRadius: 5,
+  },
+  small_text: {
+    alignSelf: "center",
+    fontSize: 25,
+    fontFamily: "My",
+    color: "white",
   }
 });

@@ -7,6 +7,7 @@ import { IconButton } from 'react-native-paper';
 import RNPickerSelect from 'react-native-picker-select';
 import Modal from 'react-native-simple-modal';
 import Checkbox from 'expo-checkbox';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 import addressData from "../data/addressData";
 import walletData from "../data/walletData";
@@ -45,7 +46,7 @@ export default class App extends Component {
       balance: this.state.balance,
     };
     if (!send.address || !send.amount) {
-      alert("모두 입력해주세요");
+      alert("모두 입력해주세요.");
       return;
     }
     if (send.address.length != 43) {
@@ -169,7 +170,7 @@ export default class App extends Component {
             <Text style={(this.state.balance < 0) ? {
               color: "red", fontSize: 22,
               alignSelf: "flex-end",
-              marginTop: "10%",
+              marginTop: "5%",
               paddingTop: "3%",
               paddingBottom: "5%",
               paddingHorizontal: "10%",
@@ -177,7 +178,7 @@ export default class App extends Component {
             } : {
               color: "orange", fontSize: 22,
               alignSelf: "flex-end",
-              marginTop: "10%",
+              marginTop: "5%",
               paddingTop: "3%",
               paddingBottom: "5%",
               paddingHorizontal: "10%",
@@ -203,32 +204,45 @@ export default class App extends Component {
           modalDidClose={() => this.setState({ open: false })}
           modalStyle={styles.modal}
         >
-          <View style={styles.modal}>
-            <Text style={styles.header7}>{this.state.name}님께</Text>
-            <Text style={styles.header6}>({this.state.address})</Text>
-            <Text style={styles.header7}>{this.state.amount} TOL을 송금하시겠습니까?</Text>
-            <Text style={styles.header8}>잘못된 주소일 경우, 거래를 되돌릴 수 없습니다.</Text>
-            <View style={{ flexDirection: "column", alignSelf: "center" }}>
-              <View style={{
-                width: "60%", alignSelf: "center", marginBottom: "5%", borderRadius: 5,
-                borderWidth: 2,
-                backgroundColor: "orange",
-              }}>
-                <TouchableOpacity
-                  onPress={this.onSend.bind(this)}>
-                  <Text style={styles.header9}>송금하기</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{
-                width: "60%", alignSelf: "center", borderRadius: 5,
-                borderWidth: 2,
-                backgroundColor: "gray",
-              }}>
-                <TouchableOpacity
-                  onPress={() => this.setState({ open: false })}>
-                  <Text style={styles.header9}>돌아가기</Text>
-                </TouchableOpacity>
-              </View>
+          {(this.state.name != "(저장되지 않은 주소)") &&
+            <View style={{ paddingBottom: "3%" }}>
+            </View>
+          }
+          <View style={{ paddingBottom: "5%" }}>
+            <FontAwesome5 name="coins" size={60} color="orange" />
+          </View>
+          {(this.state.name != "(저장되지 않은 주소)") &&
+            <View style={{ paddingBottom: "3%" }}>
+            </View>
+          }
+          <Text style={styles.header7}>{this.state.name}님께</Text>
+          {(this.state.name == "(저장되지 않은 주소)") &&
+            <View style={{ backgroundColor: "#FFE5CC", borderRadius: 5, marginVertical: "3%" }}>
+              <Text style={styles.header6}>{this.state.address}</Text>
+            </View>
+          }
+          <Text style={styles.header7}>{this.state.amount} TOL을 송금하시겠습니까?</Text>
+          {(this.state.name != "(저장되지 않은 주소)") &&
+            <View style={{ paddingBottom: "5%" }}>
+            </View>
+          }
+          <Text style={styles.header8}>잘못된 주소일 경우, 거래를 되돌릴 수 없습니다.</Text>
+          {(this.state.name != "(저장되지 않은 주소)") &&
+            <View style={{ paddingBottom: "5%" }}>
+            </View>
+          }
+          <View style={{ flexDirection: "column", alignSelf: "center" }}>
+            <View >
+              <TouchableOpacity
+                onPress={() => this.setState({ open: false })}>
+                <Text style={styles.small_text2}>돌아가기</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.small_btn}>
+              <TouchableOpacity
+                onPress={this.onSend.bind(this)}>
+                <Text style={styles.small_text}>송금하기</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -319,9 +333,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: 'center',
     width: "90%",
-    height: "50%",
-    paddingTop: "7%",
-    backgroundColor: "white"
+    height: "62%",
+    padding: "5%",
+    paddingTop: "10%",
+    backgroundColor: "white",
+    borderRadius: 15,
   },
   header5: {
     fontSize: 23,
@@ -331,26 +347,26 @@ const styles = StyleSheet.create({
     fontFamily: "Mybold",
   },
   header6: {
-    fontSize: 17,
+    fontSize: 15,
     textAlign: "center",
     alignSelf: "center",
     width: "100%",
-    height: "20%",
     fontFamily: "Mybold",
     color: "black",
+    padding: "3%"
   },
   header7: {
-    fontSize: 23,
+    fontSize: 25,
     alignSelf: "center",
-    paddingBottom: "1%",
+    paddingTop: "2%",
     fontFamily: "Mybold",
   },
   header8: {
-    fontSize: 21,
+    fontSize: 17,
     alignSelf: "center",
-    paddingTop: "10%",
+    paddingTop: "3%",
     paddingBottom: "7%",
-    fontFamily: "Mybold",
+    fontFamily: "My",
     color: "orange"
   },
   image: {
@@ -394,6 +410,28 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Mybold",
   },
+  small_btn: {
+    alignSelf: "center",
+    marginTop: "5%",
+    padding: "2%",
+    paddingHorizontal: "20%",
+    fontSize: 25,
+    backgroundColor: "orange",
+    borderRadius: 5,
+  },
+  small_text: {
+    alignSelf: "center",
+    fontSize: 25,
+    fontFamily: "My",
+    color: "white",
+  },
+  small_text2: {
+    alignSelf: "center",
+    fontSize: 25,
+    fontFamily: "Mybold",
+    color: "black",
+    textDecorationLine: "underline"
+  }
 });
 
 const pickerSelectStyles = StyleSheet.create({
