@@ -1,4 +1,6 @@
-{
+import 'dotenv/config'
+
+export default {
   "expo": {
     "name": "my-app",
     "slug": "my-app",
@@ -27,6 +29,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "BACKEND_URL": process.env.BACKEND_URL || 'https://crypto.pmh.codes'
     }
-  }
+  },
 }

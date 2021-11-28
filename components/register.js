@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Text, View, StyleSheet, Dimensions, TextInput } from "react-native";
 import { Button, NativeBaseProvider } from "native-base";
+import { callBackend } from "../utils/backend";
+import AsyncStorageLib from "@react-native-async-storage/async-storage";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -24,11 +26,12 @@ export default class App extends Component {
     };
   }
 
-  idCheck() {
-    // id 중복 확인
+  async idCheck() {
+    const res = await callBackend('GET', `/auth/claimed?id=${this.state.id}`)
+    if (res.claimed) alert('중복된 아이디입니다, 다른 아이디를 입력해주세요.')
   }
 
-  handleSubmit() {
+  async handleSubmit() {
     const user = {
       id: this.state.id,
       password: this.state.password,
@@ -55,10 +58,32 @@ export default class App extends Component {
       return;
     }
 
-    //post
-    //...
+    const registRes = await callBackend('POST', '/auth/regist', {
+      id: this.state.id,
+      password: this.state.password,
+      passwordCheck: this.state.password_confirm
+    })
+    
+    if (registRes.success) {
+      await AsyncStorageLib.setItem('token', registRes.data.token);
+      this.props.navigation.navigate("Create_wallet");
+      return
+    }
 
-    this.props.navigation.navigate("Create_wallet");
+    if (registRes.error === 111) {
+      alert('중복된 아이디입니다, 다른 아이디를 입력해주세요.')
+      return
+    }
+
+    if (registRes.error === 103) {
+      alert('빠짐 없이 입력해 주세요')
+      return
+    }
+
+    if (registRes.error === 112) {
+      alert('ID는 30자 미만이여야 합니다.')
+      return
+    }
   }
 
   render() {
@@ -79,7 +104,7 @@ export default class App extends Component {
                 style={styles.textForm2}
                 value={this.state.id}
                 placeholder={"아이디"}
-                maxLength="30"
+                maxLength={30}
                 autoCorrect={false}
                 onChangeText={(id) => {
                   this.setState({ id });
@@ -87,7 +112,7 @@ export default class App extends Component {
               />
               <Button style={{ width: "30%", backgroundColor: "orange", fontFamily: "My" }}
                 onPress={this.idCheck.bind(this)}>
-                <Text style={{ fontFamily: "Mybold", color: "white", fontSize: "18" }} >중복확인</Text>
+                <Text style={{ fontFamily: "Mybold", color: "white", fontSize: 18 }} >중복확인</Text>
               </Button>
             </View>
             {
@@ -106,7 +131,7 @@ export default class App extends Component {
               style={styles.textForm}
               value={this.state.password}
               placeholder={"비밀번호"}
-              maxLength="100"
+              maxLength={100}
               secureTextEntry={true}
               autoCorrect={false}
               onChangeText={(password) => {
@@ -129,7 +154,7 @@ export default class App extends Component {
               style={styles.textForm}
               value={this.state.password_confirm}
               placeholder={"비밀번호 확인"}
-              maxLength="100"
+              maxLength={100}
               secureTextEntry={true}
               autoCorrect={false}
               onChangeText={(password_confirm) => {
