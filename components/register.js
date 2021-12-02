@@ -27,8 +27,22 @@ export default class App extends Component {
   }
 
   async idCheck() {
+    if (!this.state.id) {
+      alert("아이디를 입력해주세요");
+      return;
+    }
+    if (white_space.test(this.state.id)) {
+      alert("공백은 포함할 수 없습니다.");
+      return;
+    }
+    if (kor.test(this.state.id) || sym.test(this.state.id) || this.state.id.length < 5) {
+      alert("아이디는 5자 이상의 영문, 숫자만 사용할 수 있습니다.");
+      return;
+    }
+
     const res = await callBackend('GET', `/auth/claimed?id=${this.state.id}`)
     if (res.claimed) alert('중복된 아이디입니다, 다른 아이디를 입력해주세요.')
+    else alert('사용 가능한 아이디입니다.')
   }
 
   async handleSubmit() {
