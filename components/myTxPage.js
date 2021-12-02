@@ -1,40 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { paginate } from '../utils/paginate';
 import { NativeBaseProvider } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from '@expo/vector-icons';
-import { IconButton } from 'react-native-paper';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
 
 //import txData from '../data/txDataEmpty'; 
-import txData from '../data/txData'; 
-import addressData from '../data/addressData';
+import { callBackend } from '../utils/backend';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
-const myTxPage = () => {
-  // shortAddressData = txData + short address, name
-  var shortAddressData = new Array();
-  for (var i = 0; i < txData.length; i++) {
-    var jsonObject = JSON.parse(JSON.stringify(txData[i]));
-    var aJson = new Object();
-    aJson.type = jsonObject.type;
-    aJson.address = jsonObject.address;
-    aJson.short_address = jsonObject.address[0] + jsonObject.address[1] + jsonObject.address[3] + jsonObject.address[4] + "..." + jsonObject.address[39] + jsonObject.address[40] + jsonObject.address[41] + jsonObject.address[42];
-    aJson.date = jsonObject.date;
-    aJson.amount = jsonObject.amount;
-    aJson.name = "(저장되지 않은 주소)";
-    shortAddressData.push(aJson);
-  }
-
-  shortAddressData.sort((a, b) => (a.date > b.date ? -1 : 1));
-
+const myTxPage = ({ walletId }) => {
   const [txs, setTxs] = useState({
-    data: shortAddressData,
+    data: [],
     pageSize: 10,
     currentPage: 1,
   });
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const handlePageChange = (page) => {
     if (0 < page && page <= pages) {
@@ -47,15 +32,33 @@ const myTxPage = () => {
   const length = txs.data.length;
   const pageCount = Math.ceil(length / pageSize);
   const pages = pageCount;
+  const [addresses, setAddresses] = useState([])
 
-  if (length == 0) {
+
+  async function fetchData() {
+    setIsLoading(true);
+    const addrRes = await callBackend('GET', '/api/addresses')
+    const txRes = await callBackend('GET', `/api/wallets/${walletId}/transactions?count=${txs.pageSize}&page=${txs.currentPage}`)
+
+    if (addrRes.success) setAddresses(addrRes.data)
+    if (txRes.success) setTxs({ ...txs, data: txRes.data })
+
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    fetchData();
+    setInterval(fetchData, 10000);
+  }, [])
+
+  if (txs.data.length == 0) {
     return (
       <NativeBaseProvider>
         <View style={{ flexDirection: "row", justifyContent: "space-between", width: screenWidth }}>
           <Text style={styles.header2}>
-            거래 내역 ({length})</Text>
+            거래 내역 ({txs.data.length})</Text>
         </View>
-        <Text style={{ alignSelf:"center", paddingTop: "20%", fontFamily: "My", fontSize: 25 }}>거래 내역이 없습니다.</Text>
+        <Text style={{ alignSelf:"center", paddingTop: "20%", fontFamily: "My", fontSize: 25 }}>{!isLoading ? '거래 내역이 없습니다.' : <><ActivityIndicator color="black" /> 로딩중</>}</Text>
       </NativeBaseProvider>
     );
   }
@@ -64,7 +67,7 @@ const myTxPage = () => {
     <NativeBaseProvider>
       <View style={{ flexDirection: "row", justifyContent: "space-between", width: screenWidth }}>
         <Text style={styles.header2}>
-          거래 내역 ({length})</Text>
+          거래 내역 ({txs.data.length}) {isLoading && <ActivityIndicator color="black" />}</Text>
         <View style={{ flexDirection: "row" }}>
           <IconButton size={30}
             style={{ paddingTop: "5%" }}
@@ -116,7 +119,7 @@ const myTxPage = () => {
                       </View>
                     </View>
                     <View style={styles.address}>
-                      {addressData.map((list, i) => {
+                      {addresses.map((list, i) => {
                         if (list.address == card.address) {
                           card.name = list.name;
                         }
