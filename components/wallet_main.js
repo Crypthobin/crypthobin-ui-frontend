@@ -1,14 +1,16 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity, ImageBackground } from "react-native";
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, ImageBackground, Image } from "react-native";
 import { NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { IconButton } from 'react-native-paper';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
+import Constants from "expo-constants";
 import Modal from 'react-native-simple-modal';
 import { QRCode } from 'react-native-custom-qr-codes-expo';
 import MyTxPage from './myTxPage';
 
 import walletData from '../data/walletData';
+import { callBackend } from "../utils/backend";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -22,7 +24,21 @@ export default class App extends Component {
       isDatePickerVisible: false,
       setDatePickerVisibility: false,
       include: false,
+      isLoading: true,
+      data: null
     };
+
+    this.fetchData()
+    setInterval(this.fetchData.bind(this), 10000)
+  }
+  
+  async fetchData () {
+    this.setState({ isLoading: true })
+    
+    const res = await callBackend('GET', '/api/wallets')
+    if (res.success) this.setState({ data: res.data[0]})
+    
+    this.setState({ isLoading: false })
   }
 
   showDatePicker = () => {
@@ -58,13 +74,13 @@ export default class App extends Component {
             />
           </View>
           <Text style={styles.header2}>
-            {walletData.name}</Text>
+            {this.state.data?.alias || '로딩중'} {this.state.isLoading && <ActivityIndicator  color="black"/>}</Text>
           <View style={styles.container2}>
             <ImageBackground
               style={styles.image}
               source={require("../images/sot.png")}>
               <Text style={styles.logo2} >Crypthobin PQC Wallet</Text>
-              <Text style={styles.logo3} > {walletData.balance} TOL</Text>
+              <Text style={styles.logo3} > {this.state.data?.balance || '0'} TOL</Text>
               <IconButton size={70}
                 style={{ marginLeft: "79%", paddingBottom: "15%" }}
                 icon={() => (
@@ -77,7 +93,7 @@ export default class App extends Component {
               />
             </ImageBackground>
           </View>
-          <MyTxPage />
+          {this.state.data && <MyTxPage walletId={this.state.data.id} />}
           <Modal
             offset={this.state.offset}
             open={this.state.open}
@@ -87,13 +103,7 @@ export default class App extends Component {
           >
             <View style={{ alignItems: "center", width: "100%" }}>
               <View style={{ borderWidth: 1, borderColor: "orange" }}>
-                <QRCode content='https://reactnative.com'
-                  outerEyeStyle='circle'
-                  codeStyle='circle'
-                  innerEyeStyle='circle'
-                  logo={require('../images/test.png')}
-                  size='200'
-                />
+                <Image style={{ width: 300, height: 300 }} source={{ uri: `${Constants.manifest.extra.BACKEND_URL}/qr/${this.state.data?.qrKey}.png` }}/>
               </View>
               <View style={{ backgroundColor: "#FFE5CC", borderRadius: 5, marginVertical: "3%" }}>
                 <Text style={styles.header4} >{walletData.address}</Text>

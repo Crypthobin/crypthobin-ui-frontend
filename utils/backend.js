@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 export async function callBackend (method, path, body) {
   const token = await AsyncStorage.getItem('token')
 
-  console.log('callBackend()', path)
+  console.log('callBackend()', method, path)
   return fetch(`${Constants.manifest.extra.BACKEND_URL}${path}`, {
     method,
     headers: {
@@ -13,5 +13,5 @@ export async function callBackend (method, path, body) {
       'Authorization': token ? `Bearer ${token}` : undefined
     },
     body: body ? JSON.stringify(body) : undefined
-  }).then((res) => res.json()).then((res) => { console.log(res); return res })
+  }).then((res) => res.json())
 }

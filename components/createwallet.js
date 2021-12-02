@@ -54,7 +54,7 @@ export default class App extends Component {
               style={styles.textForm}
               value={this.state.wallet_name}
               placeholder={"지갑 이름"}
-              maxLength="14"
+              maxLength={14}
               autoCorrect={false}
               onChangeText={(wallet_name) => {
                 this.setState({ wallet_name });

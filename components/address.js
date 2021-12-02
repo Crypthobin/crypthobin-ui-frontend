@@ -1,55 +1,89 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, TextInput } from "react-native";
-import { NativeBaseProvider } from 'native-base';
+import { Button, NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { ScrollView } from "react-native-gesture-handler";
-import { IconButton } from 'react-native-paper';
-import Modal from 'react-native-simple-modal';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
+import Modal from './Modal';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-
-import addressData from "../data/addressData";
+import { callBackend } from "../utils/backend";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
 
-var check_data = [];
-var false_data = [];
-for (var i = 0; i < addressData.length; i++) {
-  check_data[i] = false;
-  false_data[i] = false;
-}
-
 export default class App extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       friend: {},
       name: "",
       address: "",
       open_add: false,
       edit: false,
-      check: check_data,
+      check: [],
+      false_data: [],
       open_del: false,
+      isLoading: true,
+      addresses: []
     };
+
+    this.fetchData()
+    setInterval(this.fetchData.bind(this), 10000);
+  }
+
+  async fetchData () {
+    this.setState({ isLoading: true });
+
+    const res = await callBackend('GET', '/api/addresses')
+
+    var check_data = [];
+    var false_data = [];
+    for (var i = 0; i < this.state.addresses.length; i++) {
+      check_data[i] = false;
+      false_data[i] = false;
+    }
+
+    this.setState({
+      check: check_data,
+      false_data,
+      addresses: res.data,
+      isLoading: false
+    });
   }
 
   checkDel = (i) => {
-    check_data[i] = !check_data[i];
-    addressData[i].isDel = check_data[i];
-    this.setState({ check: check_data });
+    this.state.check[i] = !this.state.check[i];
+    this.state.addresses[i].isDel = this.state.check[i];
+    this.setState({ check: this.state.check, addresses: this.state.addresses });
   }
 
-  onDel() {
-    for (var i = 0; i < check_data.length; i++) {
-      check_data[i] = false;
+  async onDel() {
+    for (var i = 0; i < this.state.check.length; i++) {
+
+      // -- backend
+      if (this.state.check[i])  {
+        const delRes = await callBackend('DELETE', `/api/addresses/${this.state.addresses[i].id}`)
+        if (!delRes.success) {
+          alert(`알 수 없는 오류 발생: ${delRes.message}`)
+          return
+        }
+      }
+
+      this.fetchData();
+      // -- backend fin.
+
+      this.state.check[i] = false;
     }
+    this.setState({ check: this.state.check })
     this.setState({ open_del: false })
     this.setState({ edit: false })
   }
 
-  onAdd() {
+  async onAdd() {
+
     const friend = {
       name: this.state.name,
       address: this.state.address,
@@ -62,17 +96,27 @@ export default class App extends Component {
       alert("주소를 다시 한 번 확인해주세요.");
       return;
     }
-    // post
-    // ...
+
+    const addRes = await callBackend('POST', '/api/addresses', {
+      explanation: friend.name,
+      address: friend.address
+    })
+
+    if (!addRes.success) {
+      alert(`알 수 없는 오류 발생: ${addRes.message}`)
+      return
+    }
+
     this.setState({ open_add: false });
+    this.fetchData()
   }
 
   onReset() {
-    for (var i = 0; i < addressData.length; i++) {
-      check_data[i] = false;
-      addressData[i].isDel = false;
+    for (var i = 0; i < this.state.addresses.length; i++) {
+      this.state.check[i] = false;
+      this.state.addresses[i].isDel = false;
     }
-    this.setState({ edit: false });
+    this.setState({ edit: false, check: this.state.check, addresses: this.state.addresses });
   }
 
   render() {
@@ -102,7 +146,7 @@ export default class App extends Component {
             width: screenWidth
           }}>
             <Text style={styles.header2}>
-              주소록</Text>
+              주소록 {this.state.isLoading && <ActivityIndicator color="black" />}</Text>
             <IconButton size={30}
               style={{ marginLeft: "42%", marginTop: "3%" }}
               icon={() => {
@@ -111,7 +155,7 @@ export default class App extends Component {
                     <Ionicons name="trash-bin" size={25} color="black" />
                   );
                 } else return (
-                  <Text style={{ fontFamily: "Mybold", fontSize: "25" }}>취소</Text>
+                  <Text style={{ fontFamily: "Mybold", fontSize: 25 }}>취소</Text>
                 );
               }}
               onPress={() => {
@@ -140,7 +184,7 @@ export default class App extends Component {
                   return (
                     <View style={{ flexDirection: "row" }}>
                       <Ionicons name="trash-bin" size={25} color="orange" />
-                      <Text style={{ marginTop: "30%", color: "orange", fontFamily: "Mybold", fontSize: "15" }}>({count})</Text>
+                      <Text style={{ marginTop: "30%", color: "orange", fontFamily: "Mybold", fontSize: 15 }}>({count})</Text>
                     </View>
                   );
                 }
@@ -149,7 +193,7 @@ export default class App extends Component {
                 if (!this.state.edit) {
                   this.setState({ open_add: true })
                 } else {
-                  if (JSON.stringify(this.state.check) != JSON.stringify(false_data)) {
+                  if (JSON.stringify(this.state.check) != JSON.stringify(this.state.false_data)) {
                     this.setState({ open_del: true });
                   } else {
                     alert("삭제할 주소를 선택해주세요.");
@@ -160,7 +204,7 @@ export default class App extends Component {
           </View>
           <ScrollView>
             <View style={styles.container3}>
-              {addressData.map((card, i) => {
+              {this.state.addresses.map((card, i) => {
                 if (this.state.edit) {
                   return (
                     <View style={{ flexDirection: "row", justifyContent: "space-between", paddingLeft: "5%" }}>
@@ -178,11 +222,11 @@ export default class App extends Component {
                             }}
                           >
                             <View style={styles.name}>
-                              <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.name}</Text>
+                              <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.explanation}</Text>
                             </View>
                             <View style={styles.address}>
                               <Text style={{ fontSize: 15, fontFamily: "My", }}>
-                                {card.address}
+                                {card.walletAddress}
                               </Text>
                             </View>
                           </View>
@@ -225,11 +269,11 @@ export default class App extends Component {
                           }}
                         >
                           <View style={styles.name}>
-                            <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.name}</Text>
+                            <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.explanation}</Text>
                           </View>
                           <View style={styles.address}>
                             <Text style={{ fontSize: 15, fontFamily: "My", }}>
-                              {card.address}
+                              {card.walletAddress}
                             </Text>
                           </View>
                         </View>
@@ -247,7 +291,7 @@ export default class App extends Component {
             modalDidClose={() => this.setState({ open_add: false })}
             modalStyle={styles.modal}
           >
-            <View style={styles.modal}>
+            <View>
               <FontAwesome name="address-card" size={60} color="orange" />
               <View style={styles.formArea}>
                 <Text style={styles.header4}>
@@ -255,7 +299,7 @@ export default class App extends Component {
                 <TextInput
                   style={styles.textForm}
                   value={this.state.name}
-                  maxLength="15"
+                  maxLength={15}
                   onChangeText={(name) => {
                     this.setState({ name });
                   }}
@@ -269,12 +313,12 @@ export default class App extends Component {
                     this.setState({ address });
                   }}
                   placeholder={"ex) pqc1 ... "} />
+                  <TouchableOpacity
+                    style={styles.small_btn}
+                    onPress={() => { this.onAdd(); }}>
+                    <Text style={styles.small_text}>추가하기</Text>
+                  </TouchableOpacity>
               </View>
-              <TouchableOpacity
-                style={styles.small_btn}
-                onPress={() => { this.onAdd(); }}>
-                <Text style={styles.small_text}>추가하기</Text>
-              </TouchableOpacity>
             </View>
           </Modal>
           <Modal
@@ -288,10 +332,10 @@ export default class App extends Component {
             <Text style={{ fontSize: 23, fontFamily: "Mybold", paddingTop: "10%", paddingBottom: "10%" }}>아래 주소를 삭제하시겠습니까?</Text>
             <View style={{ width: "80%", height: "30%", backgroundColor: "#FFE5CC", padding: "3%", borderRadius: 10 }}>
               <ScrollView>
-                {addressData.map((card) => {
+                {this.state.addresses.map((card) => {
                   if (card.isDel) {
                     return (
-                      <Text style={{ fontFamily: "My", fontSize: "20", marginBottom: "3%", marginLeft: "5%" }}>{card.name}</Text>
+                      <Text style={{ fontFamily: "My", fontSize: 20, marginBottom: "3%", marginLeft: "5%" }}>{card.explanation}</Text>
                     );
                   }
                 })}
