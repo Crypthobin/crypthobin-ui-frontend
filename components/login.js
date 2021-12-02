@@ -48,6 +48,7 @@ export default class App extends Component {
     if (loginRes.success) {
       await AsyncStorage.setItem('token', loginRes.data.token);
       this.props.navigation.navigate("After");
+      this.setState({ isLoading: false });
     }
 
     if (!loginRes.success) {

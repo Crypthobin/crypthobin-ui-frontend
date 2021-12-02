@@ -106,7 +106,7 @@ export default class App extends Component {
                 <Image style={{ width: 300, height: 300 }} source={{ uri: `${Constants.manifest.extra.BACKEND_URL}/qr/${this.state.data?.qrKey}.png` }}/>
               </View>
               <View style={{ backgroundColor: "#FFE5CC", borderRadius: 5, marginVertical: "3%" }}>
-                <Text style={styles.header4} >{walletData.address}</Text>
+                <Text style={styles.header4} >{this.state?.data?.address}</Text>
               </View>
               <TouchableOpacity
                 onPress={() => this.setState({ open: false })}>

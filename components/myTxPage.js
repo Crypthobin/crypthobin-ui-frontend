@@ -9,6 +9,7 @@ import { ActivityIndicator, IconButton } from 'react-native-paper';
 
 //import txData from '../data/txDataEmpty'; 
 import { callBackend } from '../utils/backend';
+import moment from 'moment';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
@@ -38,10 +39,20 @@ const myTxPage = ({ walletId }) => {
   async function fetchData() {
     setIsLoading(true);
     const addrRes = await callBackend('GET', '/api/addresses')
-    const txRes = await callBackend('GET', `/api/wallets/${walletId}/transactions?count=${txs.pageSize}&page=${txs.currentPage}`)
 
+    txs.data = []
+    
+    for (let i = 0; true; i++) {
+      const txRes = await callBackend('GET', `/api/wallets/${walletId}/transactions?count=100&page=${i}`)
+      if (!txRes.success || txRes.data.length < 1) {
+        break
+      }
+
+      txs.data.push(...txRes.data)
+    }
+    
     if (addrRes.success) setAddresses(addrRes.data)
-    if (txRes.success) setTxs({ ...txs, data: txRes.data })
+    setTxs({ ...txs, data: txs.data.filter((v) => v.trusted).sort((a, b) => b.time - a.time) })
 
     setIsLoading(false);
   }
@@ -104,32 +115,26 @@ const myTxPage = ({ walletId }) => {
                     }}
                   >
                     <View style={{ flexDirection: "column", width: "20%", justifyContent: "center" }}>
-                      {card.type == "보내기" &&
+                      {card.category == "send" &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-made" size={30} color="orange" />
                         </View>
                       }
-                      {card.type == "받기" &&
+                      {card.category == "receive" &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-received" size={30} color="orange" />
                         </View>
                       }
                       <View style={styles.date}>
-                        <Text style={{ fontSize: 15, fontFamily: "My", }}>{card.date}</Text>
+                        <Text style={{ fontSize: 15, fontFamily: "My", }}>{moment(card.timerecived).format('YYYY.MM.DD')}</Text>
                       </View>
                     </View>
                     <View style={styles.address}>
-                      {addresses.map((list, i) => {
-                        if (list.address == card.address) {
-                          card.name = list.name;
-                        }
-                      }
-                      )}
-                      <Text style={{ fontSize: 20, fontFamily: "My", }}>{card.name}</Text>
-                      <Text style={{ fontSize: 20, fontFamily: "My", color: "orange" }}>{card.short_address}</Text>
+                      <Text style={{ fontSize: 20, fontFamily: "My", }}>{addresses?.find((v) => v.walletAddress === card.address)?.explaination || '(등록되지 않은 월렛)'}</Text>
+                      <Text style={{ fontSize: 20, fontFamily: "My", color: "orange" }}>{card.address.substring(0, 10)}...{card.address.substring(38)}</Text>
                     </View>
                     <View style={styles.amount}>
-                      <Text style={{ fontSize: 25, fontFamily: "My", alignSelf: "flex-end", }}>{card.amount} TOL</Text>
+                      <Text style={{ fontSize: 25, fontFamily: "My", alignSelf: "flex-end", }}>{Math.abs(card.amount)} TOL</Text>
                     </View>
                   </View>
                 </View>
