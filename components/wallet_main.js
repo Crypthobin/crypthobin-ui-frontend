@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, ImageBackground, Image } from "react-native";
-import { NativeBaseProvider } from 'native-base';
+import { Button, NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ActivityIndicator, IconButton } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import MyTxPage from './myTxPage';
 
 import walletData from '../data/walletData';
 import { callBackend } from "../utils/backend";
+import { justifyContent } from "styled-system";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -81,16 +82,26 @@ export default class App extends Component {
               source={require("../images/sot.png")}>
               <Text style={styles.logo2} >Crypthobin PQC Wallet</Text>
               <Text style={styles.logo3} > {this.state.data?.balance || '0'} TOL</Text>
-              <IconButton size={70}
-                style={{ marginLeft: "79%", paddingBottom: "15%" }}
+              <Button style={{height:"30%", width:"20%", alignSelf:"flex-end", backgroundColor:"#00ff0000",resizeMode: "contain", 
+            }}
+            onPress={() => {
+              this.setState({ open: true })
+            }}
+            >
+              {/* <IconButton size={50}
+                style={ styles.qricon }
                 icon={() => (
-                  <Ionicons name="ios-qr-code" size={50} color="orange"
+                  <Ionicons name="ios-qr-code" size={40} color="orange"
+                  
                   />
                 )}
                 onPress={() => {
                   this.setState({ open: true })
                 }}
-              />
+              /> */}
+              <Ionicons name="ios-qr-code" size={40} color="orange"/>
+
+              </Button>
             </ImageBackground>
           </View>
           {this.state.data && <MyTxPage walletId={this.state.data.id} />}
@@ -101,14 +112,16 @@ export default class App extends Component {
             modalDidClose={() => this.setState({ open: false })}
             modalStyle={styles.modal}
           >
-            <View style={{ alignItems: "center", width: "100%" }}>
-              <View style={{ borderWidth: 1, borderColor: "orange" }}>
-                <Image style={{ width: 300, height: 300 }} source={{ uri: `${Constants.manifest.extra.BACKEND_URL}/qr/${this.state.data?.qrKey}.png` }}/>
-              </View>
-              <View style={{ backgroundColor: "#FFE5CC", borderRadius: 5, marginVertical: "3%" }}>
+            <View style={{ justifyContent: "center", width: "100%", height:"100%", }}>
+             
+                <Image style={{ width:"90%", height:"60%", resizeMode: "contain",
+    alignItems: "center", alignSelf:"center" }} source={{ uri: `${Constants.manifest.extra.BACKEND_URL}/qr/${this.state.data?.qrKey}.png` }}/>
+             
+              <View style={{ backgroundColor: "#FFE5CC", borderRadius: 5,height:"20%", alignSelf:"center", justifyContent:"center",}}>
                 <Text style={styles.header4} >{this.state?.data?.address}</Text>
               </View>
               <TouchableOpacity
+              style={{ height:"15%", backgroundColor:"green"}}
                 onPress={() => this.setState({ open: false })}>
                 <View style={styles.small_btn}>
                   <Text style={styles.small_text}>닫기</Text>
@@ -163,8 +176,7 @@ const styles = StyleSheet.create({
   },
   logoText: {
     textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 28,
+    fontSize: 35,
     color: "black",
     fontFamily: "Mybold",
     paddingLeft: "6%",
@@ -174,23 +186,26 @@ const styles = StyleSheet.create({
   },
   logo2: {
     alignSelf: "flex-start",
-    fontWeight: "bold",
     fontSize: 22,
     color: "white",
     fontFamily: "Mybold",
     paddingTop: "3%",
     marginLeft: "5%",
-
+    height:"20%",
   },
   logo3: {
     alignSelf: "center",
-    fontWeight: "bold",
     fontSize: 40,
     color: "white",
     fontFamily: "Mybold",
-    paddingTop: "10%",
     marginLeft: "5%",
-
+    height:"40%",
+    paddingTop:"10%",
+  },
+  qricon: {
+    paddingLeft:"5%",
+    backgroundColor:"blue",
+    alignSelf:"center"
   },
   header2: {
     fontSize: 35,
@@ -217,7 +232,7 @@ const styles = StyleSheet.create({
     fontFamily: "My",
   },
   header4: {
-    fontSize: 17,
+    fontSize: 20,
     alignSelf: "center",
     padding: "3%",
     fontFamily: "My",
@@ -234,7 +249,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: "100%",
+    height: screenWidth/2.1,
     resizeMode: "cover",
     alignItems: "center",
     overflow: "hidden",
@@ -272,9 +287,9 @@ const styles = StyleSheet.create({
   },
   modal: {
     alignSelf: "center",
-    alignItems: 'center',
+    justifyContent:"space-between",
     width: "90%",
-    height: "60%",
+    height: "80%",
     backgroundColor: "white",
     borderRadius: 15,
     padding: "5%",

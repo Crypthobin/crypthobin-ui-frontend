@@ -52,7 +52,7 @@ export default class App extends Component {
       password_confirm: this.state.password_confirm,
     };
     if (!user.id || !user.password || !user.password_confirm) {
-      alert("모두 입력해주세요");
+      alert("모두 입력해 주세요.");
       return;
     }
     else if (user.password_confirm != user.password) {
@@ -113,7 +113,7 @@ export default class App extends Component {
           </View>
           <Text style={styles.title2}>계정 정보를 입력하세요.</Text>
           <View style={styles.formArea}>
-            <View style={{ flexDirection: "row", marginHorizontal: "10%", justifyContent: "space-between", width: "80%", marginBottom: "3%", }}>
+            <View style={{ flexDirection: "row", marginHorizontal: "10%", justifyContent: "space-between", width: "80%", height:"40%", marginBottom:"3%"}}>
               <TextInput
                 style={styles.textForm2}
                 value={this.state.id}
@@ -124,7 +124,7 @@ export default class App extends Component {
                   this.setState({ id });
                 }}
               />
-              <Button style={{ width: "30%", backgroundColor: "orange", fontFamily: "My" }}
+              <Button style={{ width: "30%", backgroundColor: "orange", fontFamily: "My", height:"100%", alignSelf:"center" }}
                 onPress={this.idCheck.bind(this)}>
                 <Text style={{ fontFamily: "Mybold", color: "white", fontSize: 18 }} >중복확인</Text>
               </Button>
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     height: '100%',
     alignSelf: "center",
     fontFamily: "My",
-    fontSize: 18
+    fontSize: 18,
   },
   register_btn: {
     borderRadius: 5,

@@ -383,8 +383,7 @@ const styles = StyleSheet.create({
   },
   logoText: {
     textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 28,
+    fontSize: 35,
     color: "black",
     fontFamily: "Mybold",
     paddingLeft: "6%",

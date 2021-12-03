@@ -79,9 +79,9 @@ const myTxPage = ({ walletId }) => {
       <View style={{ flexDirection: "row", justifyContent: "space-between", width: screenWidth }}>
         <Text style={styles.header2}>
           거래 내역 ({txs.data.length}) {isLoading && <ActivityIndicator color="black" />}</Text>
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row"}}>
           <IconButton size={30}
-            style={{ paddingTop: "5%" }}
+            style={{ alignSelf:"center" }}
             icon={() => (
               <AntDesign name="left" size={24} color="black" />
             )}
@@ -91,7 +91,7 @@ const myTxPage = ({ walletId }) => {
           />
           <Text style={styles.text1}>{currentPage} / {pages}</Text>
           <IconButton size={30}
-            style={{ paddingTop: "5%" }}
+            style={{ alignSelf:"center" }}
             icon={() => (
               <AntDesign name="right" size={24} color="black" />
             )}
@@ -195,8 +195,7 @@ const styles = StyleSheet.create({
   },
   text1: {
     fontSize: 20,
-    paddingTop: "6%",
-    paddingBottom: "3%",
+    alignSelf:"center",
     fontFamily: "Mybold",
   },
 });

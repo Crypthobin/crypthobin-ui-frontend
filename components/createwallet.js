@@ -21,7 +21,7 @@ export default class App extends Component {
       wallet_name: this.state.wallet_name,
     };
     if (!user.wallet_name) {
-      alert("지갑 이름을 입력해주세요.");
+      alert("지갑 이름을 입력해 주세요.");
       return;
     }
 

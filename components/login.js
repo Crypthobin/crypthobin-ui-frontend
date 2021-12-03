@@ -52,7 +52,7 @@ export default class App extends Component {
     }
 
     if (!loginRes.success) {
-      alert('올바른 아이디 혹은 비밀번호를 입력해주세요.');
+      alert('올바른 아이디 혹은 비밀번호를 입력해 주세요.');
       this.setState({ isLoading: false });
       return
     }
