@@ -3,27 +3,15 @@ import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity } from 
 import { NativeBaseProvider } from 'native-base';
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { IconButton } from 'react-native-paper';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
 import RNPickerSelect from 'react-native-picker-select';
 import Modal from 'react-native-simple-modal';
 import Checkbox from 'expo-checkbox';
 import { FontAwesome5 } from '@expo/vector-icons';
-
-import addressData from "../data/addressData";
-import walletData from "../data/walletData";
+import { callBackend } from "../utils/backend";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
-
-// for picker data
-var pickerData = new Array();
-for (var i = 0; i < addressData.length; i++) {
-  var jsonObject = JSON.parse(JSON.stringify(addressData[i]));
-  var aJson = new Object();
-  aJson.label = jsonObject.name;
-  aJson.value = jsonObject.address;
-  pickerData.push(aJson);
-}
 
 export default class App extends Component {
   constructor(props) {
@@ -33,17 +21,41 @@ export default class App extends Component {
       name: "",
       address: "",
       amount: 0,
-      balance: walletData.balance,
+      balance: 0,
+      walletId: '',
       open: false,
       select: false,
+      isLoading: true,
+      pickerData: []
     };
+
+    this.fetchData()
+    setInterval(this.fetchData.bind(this), 10000)
+  }
+
+  async fetchData () {
+    this.setState({ isLoading: true });
+
+    const addrRes = await callBackend('GET', '/api/addresses')
+    const walletRes = await callBackend('GET', '/api/wallets')
+
+    this.setState({
+      balance: walletRes.data[0].balance,
+      walletId: walletRes.data[0].id,
+      pickerData: addrRes.data.map((v) => ({
+        label: v.explanation,
+        value: v.walletAddress
+      }))
+    })
+
+    this.setState({ isLoading: false });
   }
 
   checkInput = () => {
     const send = {
       address: this.state.address,
       amount: this.state.amount,
-      balance: this.state.balance,
+      balance: this.state.balance - this.state.amount,
     };
     if (!send.address || !send.amount) {
       alert("모두 입력해주세요.");
@@ -53,7 +65,7 @@ export default class App extends Component {
       alert("올바른 주소를 입력해주세요.");
       return;
     }
-    if (send.balance < 0) {
+    if (send.balance-send.amount < 0) {
       alert("송금액은 내 잔액을 초과할 수 없습니다.");
       return;
     }
@@ -63,11 +75,21 @@ export default class App extends Component {
     this.setState({ open: true });
   };
 
-  onSend() {
+  async onSend() {
     // 송금 프로세스
-    // ...
+    const sendRes = await callBackend('POST', `/api/wallets/${this.state.walletId}/remittance`, {
+      to: this.state.address,
+      amount: parseInt(this.state.amount)
+    })
+
+    if (!sendRes.success) {
+      alert(`예상치 못한 오류: ${sendRes.message}\nfee를 낼수 있는 금액인지 확인해 보세요.`)
+      return
+    }
+
     // 모달 창 닫기
-    this.setState({ open: false });
+    this.setState({ open: false, amount: 0 });
+    alert("송금이 완료되었습니다.");
   };
 
   render() {
@@ -106,17 +128,17 @@ export default class App extends Component {
               <Checkbox
                 style={{ marginRight: "2%", marginTop: "1%", marginLeft: "20%" }}
                 value={this.state.select}
-                onValueChange={select => this.setState({ select: !this.state.select })}
+                onValueChange={() => this.setState({ select: !this.state.select })}
                 color={this.state.select ? 'orange' : undefined}
               />
-              <Text style={{ fontFamily: "My", fontSize: 20, marginTop: "0.5%", }}>직접 입력</Text>
+              <Text onPress={() => this.setState({ select: !this.state.select })} style={{ fontFamily: "My", fontSize: 20, marginTop: "0.5%", }}>직접 입력</Text>
             </View>
             {this.state.select &&
               <TextInput
                 style={styles.textForm}
                 placeholder={"ex) pqc1qyau3w0qkv4v3rla6fq5enjy4yhs23mrhyw7sde"}
                 returnKeyType="done"
-                maxLength="43"
+                maxLength={43}
                 onChangeText={(value) => {
                   this.setState({
                     address: value,
@@ -126,11 +148,12 @@ export default class App extends Component {
             {!(this.state.select) &&
               <RNPickerSelect
                 placeholder={placeholder}
-                items={pickerData}
-                onValueChange={(value, i) => {
+                items={this.state.pickerData}
+                onValueChange={(value) => {
+                  if (!value) return
                   this.setState({
                     address: value,
-                    name: pickerData[i - 1].label,
+                    name: this.state.pickerData.find((v) => v.value === value).label,
                   });
                 }}
                 style={{
@@ -159,15 +182,13 @@ export default class App extends Component {
               onChangeText={amount => {
                 if (amount == "") {
                   this.setState({ amount: 0 });
-                  this.setState({ balance: walletData.balance });
                 } else {
                   this.setState({ amount });
-                  this.setState({ balance: parseInt(walletData.balance) - parseInt(amount) });
                 }
               }
               }
             />
-            <Text style={(this.state.balance < 0) ? {
+            <Text style={(this.state.balance - this.state.amount < 0) ? {
               color: "red", fontSize: 22,
               alignSelf: "flex-end",
               marginTop: "5%",
@@ -184,7 +205,7 @@ export default class App extends Component {
               paddingHorizontal: "10%",
               fontFamily: "Mybold",
             }
-            }>(송금 후 잔액: {this.state.balance} TOL)</Text>
+            }>(송금 후 잔액: {this.state.isLoading ? <ActivityIndicator color="orange" /> : this.state.balance-this.state.amount} TOL)</Text>
           </View>
           <View style={styles.buttonArea}>
             <IconButton size={50}

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, StyleSheet, Dimensions, TextInput, Image } from "react-native";
 import { Button, NativeBaseProvider } from "native-base";
+import { callBackend } from "../utils/backend";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -15,7 +16,7 @@ export default class App extends Component {
     };
   }
 
-  handleSubmit() {
+  async handleSubmit() {
     const user = {
       wallet_name: this.state.wallet_name,
     };
@@ -23,9 +24,17 @@ export default class App extends Component {
       alert("지갑 이름을 입력해주세요.");
       return;
     }
-    // post
-    // ...
-    this.props.navigation.navigate("Login");
+
+    const createWalletRes =  await callBackend('POST', '/api/wallets', {
+      alias: user.wallet_name
+    })
+
+    if (createWalletRes.error) {
+      alert('월렛 생성에 문제가 발생하였습니다. 다시 시도해 주세요.') 
+      return
+    }
+
+    this.props.navigation.navigate("After");
   }
 
   render() {
@@ -45,7 +54,7 @@ export default class App extends Component {
               style={styles.textForm}
               value={this.state.wallet_name}
               placeholder={"지갑 이름"}
-              maxLength="14"
+              maxLength={14}
               autoCorrect={false}
               onChangeText={(wallet_name) => {
                 this.setState({ wallet_name });
