@@ -52,7 +52,7 @@ const myTxPage = ({ walletId }) => {
     }
     
     if (addrRes.success) setAddresses(addrRes.data)
-    setTxs({ ...txs, data: txs.data.filter((v) => v.trusted).sort((a, b) => b.time - a.time) })
+    setTxs({ ...txs, data: txs.data.filter((v) => v.confirmations).sort((a, b) => b.time - a.time) })
 
     setIsLoading(false);
   }
