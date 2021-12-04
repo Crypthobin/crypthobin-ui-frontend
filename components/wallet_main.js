@@ -1,17 +1,15 @@
-import React, { Component } from "react";
+import React, { Component, useCallback, useMemo } from "react";
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, ImageBackground, Image } from "react-native";
 import { Button, NativeBaseProvider } from 'native-base';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { ActivityIndicator, IconButton } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from "expo-constants";
 import Modal from 'react-native-simple-modal';
-import { QRCode } from 'react-native-custom-qr-codes-expo';
 import MyTxPage from './myTxPage';
-
-import walletData from '../data/walletData';
+import * as Clipboard from 'expo-clipboard';
+import Toast from 'react-native-easy-toast';
 import { callBackend } from "../utils/backend";
-import { justifyContent } from "styled-system";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -26,7 +24,8 @@ export default class App extends Component {
       setDatePickerVisibility: false,
       include: false,
       isLoading: true,
-      data: null
+      data: null,
+      toast:"",
     };
 
     this.fetchData()
@@ -55,6 +54,13 @@ export default class App extends Component {
     hideDatePicker();
   };
 
+
+
+  showCopyToast = () => {
+    //toastRef.current.show('주소가 복사되었습니다.');
+    toastRef="f"
+  };
+  
   render() {
     return (
       <NativeBaseProvider>
@@ -74,15 +80,25 @@ export default class App extends Component {
               }}
             />
           </View>
-          <Text style={styles.header2}>
-            {this.state.data?.alias || '로딩중'} {this.state.isLoading && <ActivityIndicator  color="black"/>}</Text>
+          <View style={styles.header2}>
+          <Text style={styles.header22}>
+            {this.state.data?.alias || '로딩 중'} </Text>
+            {this.state.isLoading && <Text
+            style={{ alignSelf:"center"}}
+            > <ActivityIndicator  color="orange"
+            /></Text> }
+            </View>
           <View style={styles.container2}>
             <ImageBackground
               style={styles.image}
               source={require("../images/sot.png")}>
               <Text style={styles.logo2} >Crypthobin PQC Wallet</Text>
               <Text style={styles.logo3} > {this.state.data?.balance || '0'} TOL</Text>
-              <Button style={{height:"30%", width:"20%", alignSelf:"flex-end", backgroundColor:"#00ff0000",resizeMode: "contain", 
+              <Button style={{height:"30%", width:"20%", alignSelf:"flex-end", backgroundColor:"#00ff0000", 
+              width: "50%",
+              height: "40%",
+              resizeMode: "contain",
+              justifyContent:"flex-end"
             }}
             onPress={() => {
               this.setState({ open: true })
@@ -99,7 +115,8 @@ export default class App extends Component {
                   this.setState({ open: true })
                 }}
               /> */}
-              <Ionicons name="ios-qr-code" size={40} color="orange"/>
+              <Ionicons name="ios-qr-code" size={50} color="orange"
+              />
 
               </Button>
             </ImageBackground>
@@ -117,11 +134,38 @@ export default class App extends Component {
                 <Image style={{ width:"90%", height:"60%", resizeMode: "contain",
     alignItems: "center", alignSelf:"center" }} source={{ uri: `${Constants.manifest.extra.BACKEND_URL}/qr/${this.state.data?.qrKey}.png` }}/>
              
-              <View style={{ backgroundColor: "#FFE5CC", borderRadius: 5,height:"20%", alignSelf:"center", justifyContent:"center",}}>
+              <View style={{ backgroundColor: "#FFE5CC", borderRadius: 5,height:"15%", alignSelf:"center", justifyContent:"center",
+            marginVertical:"5%", flexDirection:"row", paddingHorizontal:"3%"}}>
                 <Text style={styles.header4} >{this.state?.data?.address}</Text>
+          
+
+                <IconButton size={30}
+            style={{width:"20%", alignSelf:"center", justifyContent:"center"}}
+            icon={() => (
+              <MaterialIcons name="content-copy" size={24} color="black" />
+            )}
+            onPress={() => {
+              Clipboard.setString(this.state?.data?.address);
+              //this.showCopyToast;
+              this.toast.show('주소 복사 완료');
+            }}
+              />
+
+            <Toast ref={(toast) => this.toast = toast}
+            
+            positionValue={screenHeight*0.98}
+             fadeInDuration={200}
+             fadeOutDuration={1000}
+             style={{backgroundColor:'rgba(0, 0, 0, 0.7)'}}
+             textStyle={{fontFamily:"My", color:"white", fontSize:20}}
+            
+            />
+
+
               </View>
+      
               <TouchableOpacity
-              style={{ height:"15%", backgroundColor:"green"}}
+              style={{height:"15%"}}
                 onPress={() => this.setState({ open: false })}>
                 <View style={styles.small_btn}>
                   <Text style={styles.small_text}>닫기</Text>
@@ -208,12 +252,15 @@ const styles = StyleSheet.create({
     alignSelf:"center"
   },
   header2: {
-    fontSize: 35,
+    flexDirection:"row",
     alignSelf: "flex-start",
     paddingTop: "3%",
     paddingBottom: "3%",
     paddingHorizontal: "6%",
+  },
+  header22: {
     fontFamily: "Mybold",
+    fontSize: 35,
   },
   header11: {
     fontSize: 25,
@@ -237,7 +284,8 @@ const styles = StyleSheet.create({
     padding: "3%",
     fontFamily: "My",
     textAlign: "center",
-    color: "black"
+    color: "black",
+    width:"80%"
   },
   small_header: {
     fontSize: 25,
@@ -289,7 +337,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     justifyContent:"space-between",
     width: "90%",
-    height: "80%",
+    height: "75%",
     backgroundColor: "white",
     borderRadius: 15,
     padding: "5%",

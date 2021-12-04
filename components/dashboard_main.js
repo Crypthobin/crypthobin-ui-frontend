@@ -54,14 +54,16 @@ const Dashboard = ({ navigation }) => {
         </View>
         <Text style={styles.header2}>
          대시보드 {isLoading && <ActivityIndicator color="black" />}</Text>
-        <View style={{ flexDirection: "column", width: "90%", height: "33%", justifyContent: "space-between",
+        <View style={{ flexDirection: "column", width: "90%", height: screenWidth/2, justifyContent: "space-between",
        }}>
           <View style={styles.box}>
             <Text style={styles.header3}>
               현재 블록은</Text>
-            <View style={{ width:"100%",  height:"60%",flexDirection: "row", justifyContent: "space-between", paddingRight: "2%" }}>
-              <FontAwesome name="cubes" size={55} color="white"
-                style={{ width:"25%",alignSelf: "flex-end", paddingBottom: "3%", paddingLeft: "8%" }} />
+            <View style={{ width:"100%",  height:"60%",flexDirection: "row", justifyContent: "space-between", paddingRight: "2%"
+           }}>
+              <FontAwesome name="cubes" size={40} color="white"
+                style={{ width:"25%",alignSelf: "flex-end", paddingBottom: "3%", paddingLeft: "8%",
+                 }} />
               <View style={{  width:"60%", flexDirection: "row", marginRight:"3%" }}>
                 <Text style={styles.num} > {networkData.blockCount}</Text>
                 <Text style={styles.header4}>개</Text>
@@ -71,8 +73,9 @@ const Dashboard = ({ navigation }) => {
           <View style={styles.box}>
             <Text style={styles.header3}>
               현재 사용자는</Text>
-              <View style={{ width:"100%",  height:"60%",flexDirection: "row", justifyContent: "space-between", paddingRight: "2%" }}>
-              <FontAwesome5 name="people-carry" size={55} color="white"
+              <View style={{ 
+                width:"100%",  height:"60%",flexDirection: "row", justifyContent: "space-between", paddingRight: "2%" }}>
+              <FontAwesome5 name="people-carry" size={40} color="white"
                 style={{ width:"25%", alignSelf: "flex-end", paddingBottom: "3%", paddingLeft: "8%" }} />
               <View style={{ width:"60%", flexDirection: "row", marginRight:"3%" }}>
                 <Text style={styles.num} > {networkData.userCount}</Text>
@@ -179,11 +182,12 @@ const styles = StyleSheet.create({
   header3: {
     fontSize: 22,
     alignSelf: "flex-start",
-    paddingTop:"6%",
     paddingHorizontal: "6%",
     fontFamily: "My",
     color: "black",
-    height:"34%",
+    height:"40%",
+    alignContent:"center",
+    paddingTop:"2%"
   },
   header33: {
     fontSize: 22,
