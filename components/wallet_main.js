@@ -82,7 +82,7 @@ export default class App extends Component {
           </View>
           <View style={styles.header2}>
           <Text style={styles.header22}>
-            {this.state.data?.alias || '로딩 중'} </Text>
+            {this.state.data?.alias || '지갑을 불러오는 중입니다.'} </Text>
             {this.state.isLoading && <Text
             style={{ alignSelf:"center"}}
             > <ActivityIndicator  color="orange"

@@ -22,11 +22,13 @@ const App_info = () => {
           밥 그릇 앱 정보</Text>
         <Text style={styles.header3}>
           '밥 그릇' 이란 ?</Text>
-        {appInfo.map((self) => {
-          return (
-            <Text style={styles.textForm}>{self.app_info}</Text>
-          )
-        })}
+        
+            <Text style={styles.textForm}>
+              '밥 그릇' 앱은 양자 내성을 가진 암호화폐를 기반으로 한 지갑입니다. 
+              {"\n"}사용자가 보다 안전하게 코인을 관리하고 거래할 수 있도록 서비스를 제공합니다.
+            </Text>
+          
+   
         <Text style={styles.header3}>
           만든 이</Text>
         <View style={{ flexDirection: "row", height: "20%", marginBottom: "6%" }}>
@@ -96,7 +98,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     fontFamily: "My",
     fontSize: 18,
-    textAlign: "center",
+    alignItems:"center",
+    justifyContent:"center",
+    textAlign:"center",
+    textAlignVertical:"center",
   },
   textForm2: {
     width: '80%',
