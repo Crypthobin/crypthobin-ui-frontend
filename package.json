@@ -32,6 +32,7 @@
     "react-native-custom-qr-codes-expo": "^2.2.0",
     "react-native-easy-toast": "^2.0.0",
     "react-native-gesture-handler": "^1.10.3",
+    "react-native-material-menu": "^2.0.0",
     "react-native-modal": "^13.0.0",
     "react-native-modal-datetime-picker": "^13.0.0",
     "react-native-paper": "^4.10.0",

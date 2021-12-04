@@ -9,6 +9,7 @@ import Modal from './Modal';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { callBackend } from "../utils/backend";
+import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -26,6 +27,7 @@ export default class App extends Component {
       check: [],
       false_data: [],
       open_del: false,
+      open_menu: [],
       isLoading: true,
       addresses: []
     };
@@ -117,6 +119,17 @@ export default class App extends Component {
       this.state.addresses[i].isDel = false;
     }
     this.setState({ edit: false, check: this.state.check, addresses: this.state.addresses });
+  }
+
+  onSingleDel(i) {
+    this.state.check[i] = !this.state.check[i];
+    this.state.addresses[i].isDel = this.state.check[i];
+    this.setState({
+      check: this.state.check, 
+      addresses: this.state.addresses,
+      open_menu: this.state.open_menu.fill(false),
+      open_del: true
+    });
   }
 
   render() {
@@ -276,6 +289,20 @@ export default class App extends Component {
                               {card.walletAddress}
                             </Text>
                           </View>
+                        </View>
+                        <View>
+                          <Menu
+                            visible={this.state.open_menu[i]}
+                            anchor={
+                              <IconButton
+                                icon={() => <FontAwesome name="ellipsis-v" size={30} color="black" />}
+                                onPress={() => {
+                                  this.state.open_menu[i] = true
+                                  this.setState({ open_menu: this.state.open_menu })
+                                }}/>}>
+                            <MenuItem onPress={() => this.onSingleDel(i)}>삭제</MenuItem>
+                            <MenuItem onPress={() => this.setState({ open_menu: this.state.open_menu.fill(false)})}>취소</MenuItem>
+                          </Menu>
                         </View>
                       </View>
                     </View>
