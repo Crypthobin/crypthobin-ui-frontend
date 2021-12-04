@@ -1,40 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { paginate } from '../utils/paginate';
 import { NativeBaseProvider } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from '@expo/vector-icons';
-import { IconButton } from 'react-native-paper';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
 
 //import txData from '../data/txDataEmpty'; 
-import txData from '../data/txData'; 
-import addressData from '../data/addressData';
+import { callBackend } from '../utils/backend';
+import moment from 'moment';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 
-const myTxPage = () => {
-  // shortAddressData = txData + short address, name
-  var shortAddressData = new Array();
-  for (var i = 0; i < txData.length; i++) {
-    var jsonObject = JSON.parse(JSON.stringify(txData[i]));
-    var aJson = new Object();
-    aJson.type = jsonObject.type;
-    aJson.address = jsonObject.address;
-    aJson.short_address = jsonObject.address[0] + jsonObject.address[1] + jsonObject.address[3] + jsonObject.address[4] + "..." + jsonObject.address[39] + jsonObject.address[40] + jsonObject.address[41] + jsonObject.address[42];
-    aJson.date = jsonObject.date;
-    aJson.amount = jsonObject.amount;
-    aJson.name = "(저장되지 않은 주소)";
-    shortAddressData.push(aJson);
-  }
-
-  shortAddressData.sort((a, b) => (a.date > b.date ? -1 : 1));
-
+const myTxPage = ({ walletId }) => {
   const [txs, setTxs] = useState({
-    data: shortAddressData,
+    data: [],
     pageSize: 10,
     currentPage: 1,
   });
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const handlePageChange = (page) => {
     if (0 < page && page <= pages) {
@@ -47,15 +33,43 @@ const myTxPage = () => {
   const length = txs.data.length;
   const pageCount = Math.ceil(length / pageSize);
   const pages = pageCount;
+  const [addresses, setAddresses] = useState([])
 
-  if (length == 0) {
+
+  async function fetchData() {
+    setIsLoading(true);
+    const addrRes = await callBackend('GET', '/api/addresses')
+
+    txs.data = []
+    
+    for (let i = 0; true; i++) {
+      const txRes = await callBackend('GET', `/api/wallets/${walletId}/transactions?count=100&page=${i}`)
+      if (!txRes.success || txRes.data.length < 1) {
+        break
+      }
+
+      txs.data.push(...txRes.data)
+    }
+    
+    if (addrRes.success) setAddresses(addrRes.data)
+    setTxs({ ...txs, data: txs.data.filter((v) => v.confirmations).sort((a, b) => b.time - a.time) })
+
+    setIsLoading(false);
+  }
+
+  useEffect(() => {
+    fetchData();
+    setInterval(fetchData, 10000);
+  }, [])
+
+  if (txs.data.length == 0) {
     return (
       <NativeBaseProvider>
         <View style={{ flexDirection: "row", justifyContent: "space-between", width: screenWidth }}>
           <Text style={styles.header2}>
-            거래 내역 ({length})</Text>
+            거래 내역 ({txs.data.length})</Text>
         </View>
-        <Text style={{ alignSelf:"center", paddingTop: "20%", fontFamily: "My", fontSize: 25 }}>거래 내역이 없습니다.</Text>
+        <Text style={{ alignSelf:"center", paddingTop: "20%", fontFamily: "My", fontSize: 25 }}>{!isLoading ? '거래 내역이 없습니다.' : <><ActivityIndicator color="black" /> 로딩중</>}</Text>
       </NativeBaseProvider>
     );
   }
@@ -64,7 +78,7 @@ const myTxPage = () => {
     <NativeBaseProvider>
       <View style={{ flexDirection: "row", justifyContent: "space-between", width: screenWidth }}>
         <Text style={styles.header2}>
-          거래 내역 ({length})</Text>
+          거래 내역 ({txs.data.length}) {isLoading && <ActivityIndicator color="black" />}</Text>
         <View style={{ flexDirection: "row" }}>
           <IconButton size={30}
             style={{ paddingTop: "5%" }}
@@ -101,32 +115,26 @@ const myTxPage = () => {
                     }}
                   >
                     <View style={{ flexDirection: "column", width: "20%", justifyContent: "center" }}>
-                      {card.type == "보내기" &&
+                      {card.category == "send" &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-made" size={30} color="orange" />
                         </View>
                       }
-                      {card.type == "받기" &&
+                      {card.category == "receive" &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-received" size={30} color="orange" />
                         </View>
                       }
                       <View style={styles.date}>
-                        <Text style={{ fontSize: 15, fontFamily: "My", }}>{card.date}</Text>
+                        <Text style={{ fontSize: 15, fontFamily: "My", }}>{moment(card.timerecived).format('YYYY.MM.DD')}</Text>
                       </View>
                     </View>
                     <View style={styles.address}>
-                      {addressData.map((list, i) => {
-                        if (list.address == card.address) {
-                          card.name = list.name;
-                        }
-                      }
-                      )}
-                      <Text style={{ fontSize: 20, fontFamily: "My", }}>{card.name}</Text>
-                      <Text style={{ fontSize: 20, fontFamily: "My", color: "orange" }}>{card.short_address}</Text>
+                      <Text style={{ fontSize: 20, fontFamily: "My", }}>{addresses?.find((v) => v.walletAddress === card.address)?.explaination || '(등록되지 않은 월렛)'}</Text>
+                      <Text style={{ fontSize: 20, fontFamily: "My", color: "orange" }}>{card.address.substring(0, 10)}...{card.address.substring(38)}</Text>
                     </View>
                     <View style={styles.amount}>
-                      <Text style={{ fontSize: 25, fontFamily: "My", alignSelf: "flex-end", }}>{card.amount} TOL</Text>
+                      <Text style={{ fontSize: 25, fontFamily: "My", alignSelf: "flex-end", }}>{Math.abs(card.amount)} TOL</Text>
                     </View>
                   </View>
                 </View>

@@ -1,20 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
-import { IconButton } from 'react-native-paper';
+import { ActivityIndicator, IconButton } from 'react-native-paper';
 import { ScrollView } from "react-native-gesture-handler";
 
-import blockData from "../data/blockData.json";
-import networkData from "../data/networkData.json";
+import { callBackend } from "../utils/backend";
+import { displayedAt } from "../utils/convert";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
 
 const Dashboard = ({ navigation }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [networkData, setNetworkData] = useState({
+    userCount: 0,
+    blockCount: 0,
+    blocks: []
+  });
 
-  blockData.sort((a, b) => (a.index > b.index ? -1 : 1));
+  useEffect(() => {
+    fetchData()
+    setInterval(fetchData, 10000)
+  }, [])
 
+  async function fetchData () {
+    setIsLoading(true)
+    const res = await callBackend('GET', '/api/info')
+    if (res.success) setNetworkData(res.data)
+    setIsLoading(false)
+  }
+  
   return (
     <NativeBaseProvider>
       <View style={styles.container}>
@@ -36,7 +52,7 @@ const Dashboard = ({ navigation }) => {
           />
         </View>
         <Text style={styles.header2}>
-          대시보드</Text>
+         대시보드 {isLoading && <ActivityIndicator color="black" />}</Text>
         <View style={{ flexDirection: "row", width: "90%", height: "22%", justifyContent: "center" }}>
           <View style={styles.box}>
             <Text style={styles.header3}>
@@ -45,13 +61,8 @@ const Dashboard = ({ navigation }) => {
               <FontAwesome name="cubes" size={40} color="white"
                 style={{ alignSelf: "flex-end", paddingBottom: "5%", paddingLeft: "8%" }} />
               <View style={{ flexDirection: "row" }}>
-                {networkData.map((network) => {
-                  return (
-                    <Text style={styles.num} > {network.user_num}</Text>
-                  );
-                })}
-                <Text style={styles.header4}>
-                  개</Text>
+                <Text style={styles.num} > {networkData.blockCount}</Text>
+                <Text style={styles.header4}>개</Text>
               </View>
             </View>
           </View>
@@ -62,21 +73,16 @@ const Dashboard = ({ navigation }) => {
               <FontAwesome5 name="people-carry" size={40} color="white"
                 style={{ alignSelf: "flex-end", paddingBottom: "7%", paddingLeft: "8%" }} />
               <View style={{ flexDirection: "row" }}>
-                {networkData.map((network) => {
-                  return (
-                    <Text style={styles.num} > {network.block_num}</Text>
-                  );
-                })}
+                <Text style={styles.num} > {networkData.userCount}</Text>
                 <Text style={styles.header4}>명</Text>
               </View>
             </View>
           </View>
         </View>
-        <Text style={styles.header33}>
-          최근 10개 블록 내역</Text>
+        <Text style={styles.header33}>최근 10개 블록 내역</Text>
         <ScrollView>
           <View style={styles.container3}>
-            {blockData.map((card, i) => {
+            {networkData.blocks.map((card, i) => {
               if (i <= 9) {
                 return (
                   <View style={styles.cardContainer} key={i}>
@@ -87,7 +93,7 @@ const Dashboard = ({ navigation }) => {
                       </View>
                       <View style={{ alignSelf: "flex-end" }}>
                         <Text style={{ fontSize: 20, fontFamily: "My", }}>
-                          {card.age}분 전
+                          {displayedAt(card.time)}
                         </Text>
                       </View>
                     </View>
@@ -105,10 +111,10 @@ const Dashboard = ({ navigation }) => {
                             <Text style={{ fontSize: 17, fontFamily: "My", }}>{card.miner} 에게</Text>
                           </View>
                           <View style={{ alignSelf: "flex-end" }}>
-                            <Text style={{ fontSize: 17, fontFamily: "My", }}>{card.reward} TOL 보상</Text>
+                            <Text style={{ fontSize: 17, fontFamily: "My", }}>{card.minerReturns} TOL 보상</Text>
                           </View>
                           <View style={styles.tx_num}>
-                            <Text style={{ fontSize: 17, fontFamily: "My", }}>확정 받은 거래 수는 {card.tx_num} 개</Text>
+                            <Text style={{ fontSize: 17, fontFamily: "My", }}>확정 받은 거래 수는 {card.txCount} 개</Text>
                           </View>
                         </View>
                       </View>

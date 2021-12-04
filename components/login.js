@@ -2,6 +2,10 @@ import React, { Component } from "react";
 import { Text, View, StyleSheet, Dimensions, TextInput } from "react-native";
 import { NativeBaseProvider, Button } from "native-base";
 import * as Font from 'expo-font';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+import { callBackend } from "../utils/backend";
+import { ActivityIndicator } from "react-native-paper";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -13,6 +17,7 @@ export default class App extends Component {
     this.state = {
       id: "",
       password: "",
+      isLoading: false,
       fontsLoaded: false,
     };
   }
@@ -32,10 +37,25 @@ export default class App extends Component {
     this.loadFonts();
   }
 
-  onLogin = () => {
-    // get
-    // ...
-    this.props.navigation.navigate("After");
+  onLogin = async () => {
+    this.setState({ isLoading: true });
+
+    const loginRes = await callBackend('POST', '/auth/login', {
+      id: this.state.id,
+      password: this.state.password
+    })
+
+    if (loginRes.success) {
+      await AsyncStorage.setItem('token', loginRes.data.token);
+      this.props.navigation.navigate("After");
+      this.setState({ isLoading: false });
+    }
+
+    if (!loginRes.success) {
+      alert('올바른 아이디 혹은 비밀번호를 입력해주세요.');
+      this.setState({ isLoading: false });
+      return
+    }
   };
 
   render() {
@@ -49,17 +69,21 @@ export default class App extends Component {
             <View style={styles.formArea}>
               <TextInput
                 style={styles.textForm}
+                onChangeText={(id) => this.setState({ id })}
                 placeholder={"아이디"} />
               <TextInput
                 style={styles.textForm}
                 secureTextEntry={true}
+                onChangeText={(password) => this.setState({ password })}
                 placeholder={"비밀번호"} />
             </View>
             <View style={styles.buttonArea}>
-              <Button block style={styles.loginButton}
-                onPress={this.onLogin}>
-                <Text style={styles.loginText}>로그인</Text>
-              </Button>
+              {this.state.isLoading && <ActivityIndicator color="black" />}
+              {!this.state.isLoading &&
+                <Button block style={styles.loginButton}
+                  onPress={this.onLogin}>
+                  <Text style={styles.loginText}>로그인</Text>
+                </Button>}
             </View>
             <Text
               style={styles.registerText}
