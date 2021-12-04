@@ -66,10 +66,20 @@ const myTxPage = ({ walletId }) => {
     return (
       <NativeBaseProvider>
         <View style={{ flexDirection: "row", justifyContent: "space-between", width: screenWidth }}>
-          <Text style={styles.header2}>
-            거래 내역 ({txs.data.length})</Text>
+        <View style={styles.header2}>
+          <Text style={styles.header22}>
+            거래 내역 </Text>
+            </View>
         </View>
-        <Text style={{ alignSelf:"center", paddingTop: "20%", fontFamily: "My", fontSize: 25 }}>{!isLoading ? '거래 내역이 없습니다.' : <><ActivityIndicator color="black" /> 로딩중</>}</Text>
+        <View style={{ alignSelf:"center", paddingTop: "20%", }}>
+          {!isLoading ? '거래 내역이 없습니다.' : 
+          <View>
+          <Text
+          style={{ fontFamily: "My", fontSize: 25}}
+          >
+            거래 내역을 불러오는 중입니다. <ActivityIndicator color="orange"/></Text>
+          </View>
+          }</View>
       </NativeBaseProvider>
     );
   }
@@ -77,8 +87,17 @@ const myTxPage = ({ walletId }) => {
   return (
     <NativeBaseProvider>
       <View style={{ flexDirection: "row", justifyContent: "space-between", width: screenWidth }}>
-        <Text style={styles.header2}>
-          거래 내역 ({txs.data.length}) {isLoading && <ActivityIndicator color="black" />}</Text>
+
+          <View style={styles.header2}>
+          <Text style={styles.header22}>
+          거래 내역 ({txs.data.length}) </Text>
+            {isLoading && <Text
+            style={{ alignSelf:"center"}}
+            > <ActivityIndicator  color="orange"
+            /></Text> }
+            </View>
+
+        
         <View style={{ flexDirection: "row"}}>
           <IconButton size={30}
             style={{ alignSelf:"center" }}
@@ -156,12 +175,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   header2: {
-    fontSize: 35,
+    flexDirection:"row",
     alignSelf: "flex-start",
     paddingTop: "3%",
     paddingBottom: "3%",
     paddingHorizontal: "6%",
+  },
+  header22: {
     fontFamily: "Mybold",
+    fontSize: 35,
   },
   cardContainer: {
     alignContent: "center",

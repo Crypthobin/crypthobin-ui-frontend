@@ -52,8 +52,14 @@ const Dashboard = ({ navigation }) => {
             }}
           />
         </View>
-        <Text style={styles.header2}>
-         대시보드 {isLoading && <ActivityIndicator color="black" />}</Text>
+        <View style={styles.header2}>
+          <Text style={styles.header22}>
+            대시보드 </Text>
+            {isLoading && <Text
+            style={{ alignSelf:"center"}}
+            > <ActivityIndicator  color="orange"
+            /></Text> }
+            </View>
         <View style={{ flexDirection: "column", width: "90%", height: screenWidth/2, justifyContent: "space-between",
        }}>
           <View style={styles.box}>
@@ -172,12 +178,15 @@ const styles = StyleSheet.create({
     paddingRight: "5%",
   },
   header2: {
-    fontSize: 35,
+    flexDirection:"row",
     alignSelf: "flex-start",
     paddingTop: "3%",
     paddingBottom: "3%",
     paddingHorizontal: "6%",
+  },
+  header22: {
     fontFamily: "Mybold",
+    fontSize: 35,
   },
   header3: {
     fontSize: 22,

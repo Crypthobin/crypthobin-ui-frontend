@@ -78,7 +78,7 @@ export default class App extends Component {
                 placeholder={"비밀번호"} />
             </View>
             <View style={styles.buttonArea}>
-              {this.state.isLoading && <ActivityIndicator color="black" />}
+              {this.state.isLoading && <ActivityIndicator color="orange" />}
               {!this.state.isLoading &&
                 <Button block style={styles.loginButton}
                   onPress={this.onLogin}>
