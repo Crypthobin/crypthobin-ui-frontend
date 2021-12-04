@@ -9,6 +9,7 @@ import Modal from 'react-native-simple-modal';
 import Checkbox from 'expo-checkbox';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { callBackend } from "../utils/backend";
+import { BarCodeScanner } from "expo-barcode-scanner";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -24,14 +25,28 @@ export default class App extends Component {
       balance: 0,
       walletId: '',
       open: false,
+      hasPermission: null,
+      scanned: false,
       select: false,
       isLoading: true,
+      qrOpen: false,
       pickerData: []
     };
 
     this.fetchData()
     setInterval(this.fetchData.bind(this), 10000)
   }
+
+  readyBarCode () {
+    BarCodeScanner.requestPermissionsAsync()
+      .then((({ status }) => {
+        this.setState({ hasPermission: status === 'granted', scanned: false, qrOpen: true });
+      }).bind(this))
+  }
+
+  handleBarCodeScanned ({ type, data }) {
+    this.setState({ scanned: true, qrOpen: false, address: data, select: true });
+  };
 
   async fetchData () {
     this.setState({ isLoading: true });
@@ -133,43 +148,49 @@ export default class App extends Component {
               />
               <Text onPress={() => this.setState({ select: !this.state.select })} style={{ fontFamily: "My", fontSize: 20, marginTop: "0.5%", }}>직접 입력</Text>
             </View>
-            {this.state.select &&
-              <TextInput
-                style={styles.textForm}
-                placeholder={"ex) pqc1qyau3w0qkv4v3rla6fq5enjy4yhs23mrhyw7sde"}
-                returnKeyType="done"
-                maxLength={43}
-                onChangeText={(value) => {
-                  this.setState({
-                    address: value,
-                  });
-                }}
-              />}
-            {!(this.state.select) &&
-              <RNPickerSelect
-                placeholder={placeholder}
-                items={this.state.pickerData}
-                onValueChange={(value) => {
-                  if (!value) return
-                  this.setState({
-                    address: value,
-                    name: this.state.pickerData.find((v) => v.value === value).label,
-                  });
-                }}
-                style={{
-                  ...pickerSelectStyles,
-                  iconContainer: {
-                    top: "15%",
-                    right: "13%",
-                  },
-                }}
-                value={this.state.address}
-                useNativeAndroidPickerStyle={false}
-                textInputProps={{ underlineColor: 'yellow' }}
-                Icon={() => {
-                  return <Ionicons name="md-arrow-down" size={24} color="black" />;
-                }}
-              />}
+            <View style={{ flexDirection: "row" }}>
+              {this.state.select &&
+                <TextInput
+                  style={{ ...styles.textForm, flexGrow: 1, width: "70%" }}
+                  placeholder={"ex) pqc1qyau3w0qkv4v3rla6fq5enjy4yhs23mrhyw7sde"}
+                  returnKeyType="done"
+                  maxLength={43}
+                  onChangeText={(value) => {
+                    this.setState({
+                      address: value,
+                    });
+                  }}
+                />}
+              {!(this.state.select) &&
+                <RNPickerSelect
+                  placeholder={placeholder}
+                  items={this.state.pickerData}
+                  onValueChange={(value) => {
+                    if (!value) return
+                    this.setState({
+                      address: value,
+                      name: this.state.pickerData.find((v) => v.value === value).label,
+                    });
+                  }}
+                  style={{
+                    ...pickerSelectStyles,
+                    iconContainer: {
+                      top: "15%",
+                      right: "13%",
+                    },
+                    viewContainer: {
+                      width: '100%'
+                    }
+                  }}
+                  value={this.state.address}
+                  useNativeAndroidPickerStyle={false}
+                  textInputProps={{ underlineColor: 'yellow' }}
+                  Icon={() => {
+                    return <Ionicons name="md-arrow-down" size={24} color="black" />;
+                  }}
+                />}
+                <IconButton onPress={this.readyBarCode.bind(this)} style={{ flexShrink: 0, borderRadius: 0 }} icon={() => <Ionicons name="ios-qr-code" size={35} color="orange" />} />
+              </View>
             <View style={{ paddingBottom: "3%", paddingTop: "5%" }}>
               <Text style={styles.header3}>
                 보낼 금액 (단위: TOL)</Text>
@@ -218,6 +239,20 @@ export default class App extends Component {
             />
           </View>
         </View>
+        <Modal
+          offset={this.state.offset}
+          open={this.state.qrOpen}
+          modalStyle={styles.modal}
+          modalDidOpen={() => {}}
+          modalDidClose={() => this.setState({ qrOpen: false })}>
+            <Text>QR코드를 인식하세요</Text>
+            {this.state.hasPermission && 
+              <BarCodeScanner
+                onBarCodeScanned={this.state.scanned ? undefined : this.handleBarCodeScanned}
+                style={{ width: "100%", height: "100%" }}
+              />}
+            {this.state.scanned && <Button title={'Tap to Scan Again'} onPress={() => this.setState({ scanned: false })} />}
+        </Modal>
         <Modal
           offset={this.state.offset}
           open={this.state.open}
@@ -467,7 +502,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderRadius: 5,
     color: 'black',
     paddingLeft: "5%",
-
+    minWidth: '80%',
   },
   inputAndroid: {
     alignSelf: "center",
@@ -480,6 +515,6 @@ const pickerSelectStyles = StyleSheet.create({
     borderRadius: 5,
     color: 'black',
     paddingLeft: "5%",
-
+    minWidth: '80%',
   },
 });

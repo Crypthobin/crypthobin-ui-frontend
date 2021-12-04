@@ -82,7 +82,7 @@ export default class App extends Component {
               <Text style={styles.logo2} >Crypthobin PQC Wallet</Text>
               <Text style={styles.logo3} > {this.state.data?.balance || '0'} TOL</Text>
               <IconButton size={70}
-                style={{ marginLeft: "79%", paddingBottom: "15%" }}
+                style={{ marginLeft: "79%", paddingBottom: 50 }}
                 icon={() => (
                   <Ionicons name="ios-qr-code" size={50} color="orange"
                   />
