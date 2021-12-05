@@ -130,7 +130,7 @@ const myTxPage = ({ walletId }) => {
                       </View>
                     </View>
                     <View style={styles.address}>
-                      <Text style={{ fontSize: 20, fontFamily: "My", }}>{addresses?.find((v) => v.walletAddress === card.address)?.explaination || '(등록되지 않은 월렛)'}</Text>
+                      <Text style={{ fontSize: 20, fontFamily: "My", }}>{addresses?.find((v) => v.otherAddresses.includes(card.address))?.explanation || '(등록되지 않은 월렛)'}</Text>
                       <Text style={{ fontSize: 20, fontFamily: "My", color: "orange" }}>{card.address.substring(0, 10)}...{card.address.substring(38)}</Text>
                     </View>
                     <View style={styles.amount}>
