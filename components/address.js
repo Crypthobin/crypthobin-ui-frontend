@@ -10,6 +10,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { callBackend } from "../utils/backend";
 import { Menu, MenuItem } from 'react-native-material-menu';
+import { height, paddingTop } from "styled-system";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -336,9 +337,16 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
             modalDidClose={() => this.setState({ open_add: false })}
             modalStyle={styles.modal}
           >
-            <View>
-              <FontAwesome name="address-card" size={60} color="orange" />
+          <View
+          style={{width:"100%", height:"30%",  justifyContent:"center"}}
+          >
+              <FontAwesome name="address-card" size={60} color="orange"
+              style={{alignSelf:"center"}} />
+              </View>
               <View style={styles.formArea}>
+                <View
+                style={{height:"40%"}}
+                >
                 <Text style={styles.header4}>
                   이름을 정해주세요.</Text>
                 <TextInput
@@ -349,6 +357,10 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
                     this.setState({ name });
                   }}
                   placeholder={"15자까지 입력 가능"} />
+                  </View>
+                  <View
+                  style={{height:"40%"}}
+                  >
                 <Text style={styles.header4}>
                   주소를 입력해주세요.</Text>
                 <TextInput
@@ -358,13 +370,18 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
                     this.setState({ address });
                   }}
                   placeholder={"ex) pqc1 ... "} />
+                   </View>
+                   <View
+                   style={{height:"20%",  justifyContent:"flex-end"}}
+                   >
                   <TouchableOpacity
                     style={styles.small_btn}
                     onPress={() => { this.onAdd(); }}>
                     <Text style={styles.small_text}>추가하기</Text>
                   </TouchableOpacity>
+                  </View>
               </View>
-            </View>
+      
           </Modal>
           <Modal
             offset={this.state.offset}
@@ -529,37 +546,35 @@ const styles = StyleSheet.create({
   header4: {
     fontSize: 23,
     alignSelf: "center",
-    paddingTop: "8%",
-    paddingBottom: "4%",
     fontFamily: "My",
+    height:"40%",
+    paddingTop:"2%"
   },
   formArea: {
     width: "100%",
-    height: "100%",
-    marginTop: "10%",
+    height: "70%",
     paddingBottom: '10%',
     alignSelf: "center",
   },
   textForm: {
     borderWidth: 2,
     borderRadius: 5,
-    width: '100%',
-    height: '20%',
+    width: '80%',
+    height:"45%",
     paddingLeft: "5%",
     paddingRight: "5%",
-    marginBottom: "1%",
     alignSelf: "center",
     fontFamily: "My",
     fontSize: 18,
   },
   small_btn: {
     alignSelf: "center",
-    marginTop: "10%",
-    padding: "2%",
-    paddingHorizontal: "20%",
     fontSize: 25,
     backgroundColor: "orange",
     borderRadius: 5,
+    width:"70%",
+    height:"80%",
+    justifyContent:"center"
   },
   small_text: {
     alignSelf: "center",
