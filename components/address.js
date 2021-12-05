@@ -390,9 +390,15 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
             modalDidClose={() => this.setState({ open_del: false })}
             modalStyle={styles.modal2}
           >
-            <MaterialCommunityIcons name="account-multiple-remove" size={60} color="orange" />
-            <Text style={{ fontSize: 23, fontFamily: "Mybold", paddingTop: "10%", paddingBottom: "10%" }}>아래 주소를 삭제하시겠습니까?</Text>
-            <View style={{ width: "80%", height: "30%", backgroundColor: "#FFE5CC", padding: "3%", borderRadius: 10 }}>
+            <View
+            style={{width:"100%", height:"30%",  justifyContent:"center"}}
+            >
+            <MaterialCommunityIcons name="account-multiple-remove" size={60} color="orange"
+          style={{alignSelf:"center"}}
+            />
+            </View>
+            <Text style={{ height:"10%", fontSize: 23, fontFamily: "Mybold"  }}>아래 주소를 삭제하시겠습니까?</Text>
+            <View style={{ width: "80%", height: "40%", backgroundColor: "#FFE5CC", padding: "3%", borderRadius: 10, marginBottom:"5%" }}>
               <ScrollView>
                 {this.state.addresses.map((card) => {
                   if (card.isDel) {
@@ -403,14 +409,18 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
                 })}
               </ScrollView>
             </View>
+            <View
+             style={{width:"100%", height:"15%",  justifyContent:"center"}}
+            >
             <TouchableOpacity
               style={styles.small_btn}
               onPress={() => {
                 this.onDel();
 
               }}>
-              <Text style={styles.small_text}>삭제</Text>
+              <Text style={styles.small_text}>삭제하기</Text>
             </TouchableOpacity>
+            </View>
           </Modal>
         </View>
       </NativeBaseProvider>
