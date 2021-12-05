@@ -9,6 +9,7 @@ import Modal from 'react-native-simple-modal';
 import Checkbox from 'expo-checkbox';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { callBackend } from "../utils/backend";
+import { justifyContent, right } from "styled-system";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -123,15 +124,17 @@ export default class App extends Component {
             송금하기</Text>
           <View style={styles.formArea}>
             <View style={{ flexDirection: "row", paddingBottom: "3%" }}>
-              <Text style={styles.header3}>
+              <Text style={styles.header33}>
                 보낼 주소</Text>
+                <View style={{ flexDirection: "row", width:"40%", justifyContent:"flex-end"}}>
               <Checkbox
-                style={{ marginRight: "2%", marginTop: "1%", marginLeft: "20%" }}
                 value={this.state.select}
                 onValueChange={() => this.setState({ select: !this.state.select })}
                 color={this.state.select ? 'orange' : undefined}
+                style={{alignSelf:"center"}}
               />
-              <Text onPress={() => this.setState({ select: !this.state.select })} style={{ fontFamily: "My", fontSize: 20, marginTop: "0.5%", }}>직접 입력</Text>
+              <Text onPress={() => this.setState({ select: !this.state.select })} style={{ alignSelf:"center", paddingLeft:"10%", fontFamily: "My", fontSize: 20 }}>직접 입력</Text>
+              </View>
             </View>
             {this.state.select &&
               <TextInput
@@ -159,8 +162,8 @@ export default class App extends Component {
                 style={{
                   ...pickerSelectStyles,
                   iconContainer: {
-                    top: "15%",
-                    right: "13%",
+                    top:"15%",
+                    right:"2%",
                   },
                 }}
                 value={this.state.address}
@@ -188,24 +191,25 @@ export default class App extends Component {
               }
               }
             />
+            <View
+            style={{alignSelf: "flex-end",
+            marginTop: "5%",
+            paddingTop: "3%",
+            paddingBottom: "5%",
+            }}
+            >
             <Text style={(this.state.balance - this.state.amount < 0) ? {
               color: "red", fontSize: 22,
-              alignSelf: "flex-end",
-              marginTop: "5%",
-              paddingTop: "3%",
-              paddingBottom: "5%",
-              paddingHorizontal: "10%",
               fontFamily: "Mybold",
             } : {
               color: "orange", fontSize: 22,
-              alignSelf: "flex-end",
-              marginTop: "5%",
-              paddingTop: "3%",
-              paddingBottom: "5%",
-              paddingHorizontal: "10%",
               fontFamily: "Mybold",
             }
-            }>(송금 후 잔액: {this.state.isLoading ? <ActivityIndicator color="orange" /> : this.state.balance-this.state.amount} TOL)</Text>
+            }>(송금 후 잔액: {this.state.isLoading ? <ActivityIndicator color="orange"
+            size={15}
+            /> : this.state.balance-this.state.amount} TOL)</Text>
+            </View>
+            
           </View>
           <View style={styles.buttonArea}>
             <IconButton size={50}
@@ -318,8 +322,14 @@ const styles = StyleSheet.create({
   header3: {
     fontSize: 25,
     alignSelf: "flex-start",
-    paddingHorizontal: "10%",
     fontFamily: "My",
+    width:"100%"
+  },
+  header33: {
+    fontSize: 25,
+    alignSelf: "flex-start",
+    fontFamily: "My",
+    width:"60%"
   },
   header9: {
     fontSize: 30,
@@ -398,7 +408,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   formArea: {
-    width: "80%",
+    width: "65%",
     height: "40%",
     marginTop: "10%",
     paddingBottom: '5%',
@@ -407,7 +417,7 @@ const styles = StyleSheet.create({
   textForm: {
     borderWidth: 2,
     borderRadius: 5,
-    width: '80%',
+    width: '100%',
     height: 45,
     paddingLeft: "5%",
     alignSelf: "center",
@@ -459,7 +469,7 @@ const pickerSelectStyles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 18,
     fontFamily: "My",
-    width: '80%',
+    width: '100%',
     height: 45,
     borderWidth: 2,
     borderColor: 'black',
@@ -472,7 +482,7 @@ const pickerSelectStyles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 18,
     fontFamily: "My",
-    width: '80%',
+    width: '100%',
     height: 45,
     borderWidth: 2,
     borderColor: 'black',
