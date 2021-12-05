@@ -9,7 +9,7 @@ import Modal from './Modal';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { callBackend } from "../utils/backend";
-import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
+import { Menu, MenuItem } from 'react-native-material-menu';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -158,16 +158,32 @@ export default class App extends Component {
             justifyContent: "flex-start",
             width: screenWidth
           }}>
-            <Text style={styles.header2}>
-              주소록 {this.state.isLoading && <ActivityIndicator color="black" />}</Text>
+            
+
+          <View style={styles.header2}>
+          <Text style={styles.header22}>
+            주소록 </Text>
+            {this.state.isLoading && <Text
+            style={{ alignSelf:"center"}}
+            > <ActivityIndicator  color="orange"
+            /></Text> }
+            </View>
+
+
+<View
+style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRight: "2%" }}>
+
+{ this.state.addresses.length != 0 &&
             <IconButton size={30}
-              style={{ marginLeft: "42%", marginTop: "3%" }}
+              style={{ alignSelf:"center"}}
               icon={() => {
                 if (!this.state.edit) {
+                  
                   return (
                     <Ionicons name="trash-bin" size={25} color="black" />
                   );
-                } else return (
+                  }
+                  else return (
                   <Text style={{ fontFamily: "Mybold", fontSize: 25 }}>취소</Text>
                 );
               }}
@@ -179,8 +195,9 @@ export default class App extends Component {
                 }
               }}
             />
+  }
             <IconButton size={30}
-              style={{ marginTop: "3%" }}
+              style={{ alignSelf:"center" }}
               icon={() => {
                 var count = 0;
                 if (!this.state.edit) {
@@ -214,9 +231,29 @@ export default class App extends Component {
                 }
               }}
             />
+
+            </View>
+
           </View>
           <ScrollView>
+
+          {this.state.addresses.length == 0 && <View
+              style={{ width:screenWidth, height:screenWidth, justifyContent:"center"
+             }}
+              >
+              <Text
+              style={{textAlign:"center", fontFamily: "My", fontSize: 25}}
+              >
+              저장된 주소가 없습니다.</Text></View>}
+
+
+
             <View style={styles.container3}>
+
+              
+
+
+
               {this.state.addresses.map((card, i) => {
                 if (this.state.edit) {
                   return (
@@ -273,12 +310,17 @@ export default class App extends Component {
                         justifyContent: "space-between",
                         padding: "2%",
                       }}>
+                        <View
+                        style={{width:"20%", alignItems:"center"}}
+                        >
                         <Ionicons name="ios-person-circle" size={60} color="orange" />
+                        </View>
                         <View
                           style={{
                             flexDirection: "column",
                             justifyContent: "space-between",
                             padding: "2%",
+                            width:"80%"
                           }}
                         >
                           <View style={styles.name}>
@@ -289,20 +331,6 @@ export default class App extends Component {
                               {card.walletAddress}
                             </Text>
                           </View>
-                        </View>
-                        <View>
-                          <Menu
-                            visible={this.state.open_menu[i]}
-                            anchor={
-                              <IconButton
-                                icon={() => <FontAwesome name="ellipsis-v" size={30} color="black" />}
-                                onPress={() => {
-                                  this.state.open_menu[i] = true
-                                  this.setState({ open_menu: this.state.open_menu })
-                                }}/>}>
-                            <MenuItem onPress={() => this.onSingleDel(i)}>삭제</MenuItem>
-                            <MenuItem onPress={() => this.setState({ open_menu: this.state.open_menu.fill(false)})}>취소</MenuItem>
-                          </Menu>
                         </View>
                       </View>
                     </View>
@@ -419,12 +447,16 @@ const styles = StyleSheet.create({
     paddingRight: "5%",
   },
   header2: {
-    fontSize: 35,
+    flexDirection:"row",
     alignSelf: "flex-start",
     paddingTop: "3%",
     paddingBottom: "3%",
     paddingHorizontal: "6%",
+    width:"65%"
+  },
+  header22: {
     fontFamily: "Mybold",
+    fontSize: 35,
   },
   image: {
     width: "90%",
@@ -439,7 +471,6 @@ const styles = StyleSheet.create({
     width: screenWidth,
     height: "60%",
     alignItems: "center",
-    backgroundColor: "white",
   },
   cardContainer: {
     alignContent: "center",
