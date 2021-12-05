@@ -157,9 +157,7 @@ export default class App extends Component {
             flexDirection: "row",
             justifyContent: "flex-start",
             width: screenWidth
-          }}>
-            
-
+          }}>          
           <View style={styles.header2}>
           <Text style={styles.header22}>
             주소록 </Text>
@@ -168,11 +166,8 @@ export default class App extends Component {
             > <ActivityIndicator  color="orange"
             /></Text> }
             </View>
-
-
 <View
 style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRight: "2%" }}>
-
 { this.state.addresses.length != 0 &&
             <IconButton size={30}
               style={{ alignSelf:"center"}}
@@ -231,29 +226,24 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
                 }
               }}
             />
-
             </View>
-
           </View>
           <ScrollView>
-
-          {this.state.addresses.length == 0 && <View
+          {( this.state.addresses.length == 0) && <View
               style={{ width:screenWidth, height:screenWidth, justifyContent:"center"
              }}
               >
+                { this.state.isLoading?
+                <Text
+                style={{textAlign:"center", fontFamily: "My", fontSize: 25}}
+                >
+                주소록을 불러오는 중입니다.</Text>
+                :
               <Text
               style={{textAlign:"center", fontFamily: "My", fontSize: 25}}
               >
-              저장된 주소가 없습니다.</Text></View>}
-
-
-
+              저장된 주소가 없습니다.</Text>}</View>}
             <View style={styles.container3}>
-
-              
-
-
-
               {this.state.addresses.map((card, i) => {
                 if (this.state.edit) {
                   return (
