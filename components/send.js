@@ -26,6 +26,7 @@ export default class App extends Component {
       walletId: '',
       open: false,
       hasPermission: null,
+      isFocused: false,
       scanned: false,
       select: false,
       isLoading: true,
@@ -37,15 +38,33 @@ export default class App extends Component {
     setInterval(this.fetchData.bind(this), 10000)
   }
 
-  readyBarCode () {
-    BarCodeScanner.requestPermissionsAsync()
-      .then((({ status }) => {
-        this.setState({ hasPermission: status === 'granted', scanned: false, qrOpen: true });
-      }).bind(this))
+  async readyBarCode () {
+    const { status } = await BarCodeScanner.requestPermissionsAsync()
+
+    if (status !== 'granted') return
+    this.setState({ scanned: false, qrOpen: true });
   }
 
-  handleBarCodeScanned ({ type, data }) {
-    this.setState({ scanned: true, qrOpen: false, address: data, select: true });
+  componentDidMount () {
+    this.focusListner = this.props.navigation.addListener(
+      'didFocus',
+      () => this.setState({ isFocused: true }),
+    );
+    this.blurListner = this.props.navigation.addListener(
+      'willBlur',
+      () => this.setState({ isFocused: false, qrOpen: false }),
+    )
+  }
+
+  componentWillUnmount() {
+    this.focusListner.remove();
+    this.blurListner.remove();
+  }
+
+
+  handleBarCodeScanned ({ data }) {
+    this.setState({ scanned: true, address: data, select: true });
+    this.setState({ qrOpen: false })
   };
 
   async fetchData () {
@@ -155,6 +174,7 @@ export default class App extends Component {
                   placeholder={"ex) pqc1qyau3w0qkv4v3rla6fq5enjy4yhs23mrhyw7sde"}
                   returnKeyType="done"
                   maxLength={43}
+                  value={this.state.address}
                   onChangeText={(value) => {
                     this.setState({
                       address: value,
@@ -244,14 +264,16 @@ export default class App extends Component {
           open={this.state.qrOpen}
           modalStyle={styles.modal}
           modalDidOpen={() => {}}
-          modalDidClose={() => this.setState({ qrOpen: false })}>
-            <Text>QR코드를 인식하세요</Text>
-            {this.state.hasPermission && 
+          modalDidClose={() => this.setState({ scanned: false, qrOpen: false })}>
+            <Text style={{ fontFamily: 'My', marginBottom: 10, fontSize: 20 }}>QR코드를 인식하세요</Text>
+            {this.state.isFocused && 
               <BarCodeScanner
-                onBarCodeScanned={this.state.scanned ? undefined : this.handleBarCodeScanned}
-                style={{ width: "100%", height: "100%" }}
+                barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
+                ratio="1:1"
+                torchMode="off"
+                onBarCodeScanned={this.state.scanned ? undefined : this.handleBarCodeScanned.bind(this)}
+                style={{ width: "80%", height: "80%" }}
               />}
-            {this.state.scanned && <Button title={'Tap to Scan Again'} onPress={() => this.setState({ scanned: false })} />}
         </Modal>
         <Modal
           offset={this.state.offset}
