@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Text, View, StyleSheet, Dimensions, TextInput, Image } from "react-native";
 import { Button, NativeBaseProvider } from "native-base";
 import { callBackend } from "../utils/backend";
+import { ActivityIndicator } from "react-native-paper";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -13,15 +14,19 @@ export default class App extends Component {
     this.state = {
       user: {},
       wallet_name: "",
+      isLoading: false
     };
   }
 
   async handleSubmit() {
+    this.setState({ isLoading: true });
+
     const user = {
       wallet_name: this.state.wallet_name,
     };
     if (!user.wallet_name) {
       alert("지갑 이름을 입력해주세요.");
+      this.setState({ isLoading: false });
       return;
     }
 
@@ -31,6 +36,7 @@ export default class App extends Component {
 
     if (createWalletRes.error) {
       alert('월렛 생성에 문제가 발생하였습니다. 다시 시도해 주세요.') 
+      this.setState({ isLoading: false });
       return
     }
 
@@ -66,11 +72,11 @@ export default class App extends Component {
             style={styles.register_btn}
             onPress={this.handleSubmit.bind(this)}
           >
-            <Text
-              style={styles.registerText}
-            >
-              가입하기
-            </Text>
+            {isLoading && <ActivityIndicator />}
+            {!isLoading &&
+              <Text style={styles.registerText}>
+                가입하기
+              </Text>}
           </Button>
         </View>
       </NativeBaseProvider>

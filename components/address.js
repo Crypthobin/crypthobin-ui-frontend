@@ -4,7 +4,7 @@ import { Button, NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { ScrollView } from "react-native-gesture-handler";
-import { ActivityIndicator, IconButton } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import Modal from './Modal';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -159,7 +159,7 @@ export default class App extends Component {
             width: screenWidth
           }}>
             <Text style={styles.header2}>
-              주소록 {this.state.isLoading && <ActivityIndicator color="black" />}</Text>
+              주소록</Text>
             <IconButton size={30}
               style={{ marginLeft: "42%", marginTop: "3%" }}
               icon={() => {

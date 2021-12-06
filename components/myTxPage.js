@@ -5,7 +5,7 @@ import { NativeBaseProvider } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from '@expo/vector-icons';
-import { ActivityIndicator, IconButton } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 
 //import txData from '../data/txDataEmpty'; 
 import { callBackend } from '../utils/backend';
@@ -69,7 +69,7 @@ const myTxPage = ({ walletId }) => {
           <Text style={styles.header2}>
             거래 내역 ({txs.data.length})</Text>
         </View>
-        <Text style={{ alignSelf:"center", paddingTop: "20%", fontFamily: "My", fontSize: 25 }}>{!isLoading ? '거래 내역이 없습니다.' : <><ActivityIndicator color="black" /> 로딩중</>}</Text>
+        <Text style={{ alignSelf:"center", paddingTop: "20%", fontFamily: "My", fontSize: 25 }}>'거래 내역이 없습니다.</Text>
       </NativeBaseProvider>
     );
   }
@@ -78,7 +78,7 @@ const myTxPage = ({ walletId }) => {
     <NativeBaseProvider>
       <View style={{ flexDirection: "row", justifyContent: "space-between", width: screenWidth }}>
         <Text style={styles.header2}>
-          거래 내역 ({txs.data.length}) {isLoading && <ActivityIndicator color="black" />}</Text>
+          거래 내역 ({txs.data.length})</Text>
         <View style={{ flexDirection: "row" }}>
           <IconButton size={30}
             style={{ paddingTop: "5%" }}

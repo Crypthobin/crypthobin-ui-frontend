@@ -205,7 +205,7 @@ export default class App extends Component {
               paddingHorizontal: "10%",
               fontFamily: "Mybold",
             }
-            }>(송금 후 잔액: {this.state.isLoading ? <ActivityIndicator color="orange" /> : this.state.balance-this.state.amount} TOL)</Text>
+            }>(송금 후 잔액: {this.state.balance-this.state.amount || <ActivityIndicator />} TOL)</Text>
           </View>
           <View style={styles.buttonArea}>
             <IconButton size={50}

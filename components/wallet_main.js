@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, ImageBackground, Image } from "react-native";
 import { NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { ActivityIndicator, IconButton } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from "expo-constants";
 import Modal from 'react-native-simple-modal';
@@ -74,7 +74,7 @@ export default class App extends Component {
             />
           </View>
           <Text style={styles.header2}>
-            {this.state.data?.alias || '로딩중'} {this.state.isLoading && <ActivityIndicator  color="black"/>}</Text>
+            {this.state.data?.alias || '로딩중'}</Text>
           <View style={styles.container2}>
             <ImageBackground
               style={styles.image}
