@@ -9,7 +9,7 @@ import Modal from 'react-native-simple-modal';
 import Checkbox from 'expo-checkbox';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { callBackend } from "../utils/backend";
-import { justifyContent, right } from "styled-system";
+import { justifyContent, right, width } from "styled-system";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -229,46 +229,67 @@ export default class App extends Component {
           modalDidClose={() => this.setState({ open: false })}
           modalStyle={styles.modal}
         >
-          {(this.state.name != "(저장되지 않은 주소)") &&
-            <View style={{ paddingBottom: "3%" }}>
-            </View>
-          }
-          <View style={{ paddingBottom: "5%" }}>
-            <FontAwesome5 name="coins" size={60} color="orange" />
+          
+          <View style={{ 
+            height:"30%",
+            backgroundColor:"green",
+            justifyContent:"center"
+           }}>
+            <FontAwesome5 name="coins" size={60} color="orange"
+            style={{alignSelf:"center"}} />
           </View>
-          {(this.state.name != "(저장되지 않은 주소)") &&
-            <View style={{ paddingBottom: "3%" }}>
-            </View>
-          }
+          
+          <View style={{ 
+            height:"10%"
+           }}>
           <Text style={styles.header7}>{this.state.name}님께</Text>
+          </View>
+
+
           {(this.state.name == "(저장되지 않은 주소)") &&
-            <View style={{ backgroundColor: "#FFE5CC", borderRadius: 5, marginVertical: "3%" }}>
+            <View style={{ height: "15%", backgroundColor: "#FFE5CC", borderRadius: 5  }}>
               <Text style={styles.header6}>{this.state.address}</Text>
             </View>
           }
+
+<View style={{ 
+            height:"10%"
+           }}>
           <Text style={styles.header7}>{this.state.amount} TOL을 송금하시겠습니까?</Text>
+          </View>
+
           {(this.state.name != "(저장되지 않은 주소)") &&
             <View style={{ paddingBottom: "5%" }}>
             </View>
           }
+          
+
+          <View style={{ 
+            height:"20%"
+           }}>
           <Text style={styles.header8}>잘못된 주소일 경우, 거래를 되돌릴 수 없습니다.</Text>
-          {(this.state.name != "(저장되지 않은 주소)") &&
-            <View style={{ paddingBottom: "5%" }}>
-            </View>
-          }
-          <View style={{ flexDirection: "column", alignSelf: "center" }}>
-            <View >
+          
+          </View>
+
+          <View style={{ height:"20%",flexDirection: "column", alignSelf: "center",
+         width:"100%", backgroundColor:"pink"}}>
+            
+            <View 
+            style={{height:"50%", justifyContent:"center"}}
+            >
               <TouchableOpacity
                 onPress={() => this.setState({ open: false })}>
                 <Text style={styles.small_text2}>돌아가기</Text>
               </TouchableOpacity>
             </View>
+
             <View style={styles.small_btn}>
               <TouchableOpacity
                 onPress={this.onSend.bind(this)}>
                 <Text style={styles.small_text}>송금하기</Text>
               </TouchableOpacity>
             </View>
+
           </View>
         </Modal>
       </NativeBaseProvider>
@@ -364,8 +385,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: "90%",
     height: "62%",
-    padding: "5%",
-    paddingTop: "10%",
+
     backgroundColor: "white",
     borderRadius: 15,
   },
@@ -394,8 +414,6 @@ const styles = StyleSheet.create({
   header8: {
     fontSize: 17,
     alignSelf: "center",
-    paddingTop: "3%",
-    paddingBottom: "7%",
     fontFamily: "My",
     color: "orange"
   },
@@ -442,12 +460,13 @@ const styles = StyleSheet.create({
   },
   small_btn: {
     alignSelf: "center",
-    marginTop: "5%",
-    padding: "2%",
-    paddingHorizontal: "20%",
+    height:"50%",
     fontSize: 25,
     backgroundColor: "orange",
     borderRadius: 5,
+    width:"50%",
+    textAlign:"center",
+    justifyContent:"center"
   },
   small_text: {
     alignSelf: "center",
@@ -460,7 +479,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontFamily: "Mybold",
     color: "black",
-    textDecorationLine: "underline"
+    textDecorationLine: "underline",
   }
 });
 
