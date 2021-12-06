@@ -232,7 +232,6 @@ export default class App extends Component {
           
           <View style={{ 
             height:"30%",
-            backgroundColor:"green",
             justifyContent:"center"
            }}>
             <FontAwesome5 name="coins" size={60} color="orange"
@@ -246,11 +245,10 @@ export default class App extends Component {
           </View>
 
 
-          {(this.state.name == "(저장되지 않은 주소)") &&
-            <View style={{ height: "15%", backgroundColor: "#FFE5CC", borderRadius: 5  }}>
+         
+            <View style={{ height: "15%", width:"100%"  }}>
               <Text style={styles.header6}>{this.state.address}</Text>
             </View>
-          }
 
 <View style={{ 
             height:"10%"
@@ -258,21 +256,16 @@ export default class App extends Component {
           <Text style={styles.header7}>{this.state.amount} TOL을 송금하시겠습니까?</Text>
           </View>
 
-          {(this.state.name != "(저장되지 않은 주소)") &&
-            <View style={{ paddingBottom: "5%" }}>
-            </View>
-          }
-          
-
+  
           <View style={{ 
-            height:"20%"
+            height:"15%"
            }}>
           <Text style={styles.header8}>잘못된 주소일 경우, 거래를 되돌릴 수 없습니다.</Text>
           
           </View>
 
           <View style={{ height:"20%",flexDirection: "column", alignSelf: "center",
-         width:"100%", backgroundColor:"pink"}}>
+         width:"100%"}}>
             
             <View 
             style={{height:"50%", justifyContent:"center"}}
@@ -400,10 +393,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: "center",
     alignSelf: "center",
-    width: "100%",
+    width: "80%",
     fontFamily: "Mybold",
     color: "black",
-    padding: "3%"
+    padding: "3%",
+    backgroundColor: "#FFE5CC",
+    borderRadius: 5,
   },
   header7: {
     fontSize: 25,
