@@ -6,7 +6,6 @@ import { IconButton } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from "expo-constants";
 import Modal from 'react-native-simple-modal';
-import { QRCode } from 'react-native-custom-qr-codes-expo';
 import MyTxPage from './myTxPage';
 
 import walletData from '../data/walletData';
@@ -36,6 +35,8 @@ export default class App extends Component {
     this.setState({ isLoading: true })
     
     const res = await callBackend('GET', '/api/wallets')
+
+    if (this.state.data) res.data[0].qrKey = this.state.data.qrKey
     if (res.success) this.setState({ data: res.data[0]})
     
     this.setState({ isLoading: false })
