@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity, Alert } from "react-native";
 import { NativeBaseProvider } from 'native-base';
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -59,15 +59,15 @@ export default class App extends Component {
       balance: this.state.balance - this.state.amount,
     };
     if (!send.address || !send.amount) {
-      alert("모두 입력해주세요.");
+      Alert.alert("","모두 입력해 주세요.",[{text:"확인"}]);
       return;
     }
     if (send.address.length != 43) {
-      alert("올바른 주소를 입력해주세요.");
+      Alert.alert("","올바른 주소를 입력해 주세요.",[{text:"확인"}]);
       return;
     }
     if (send.balance-send.amount < 0) {
-      alert("송금액은 내 잔액을 초과할 수 없습니다.");
+      Alert.alert("","송금액은 내 잔액을 초과할 수 없습니다.",[{text:"확인"}]);
       return;
     }
     if (this.state.select == true) {
@@ -90,7 +90,7 @@ export default class App extends Component {
 
     // 모달 창 닫기
     this.setState({ open: false, amount: 0 });
-    alert("송금이 완료되었습니다.");
+    Alert.alert("","송금이 완료되었습니다.",[{text:"확인"}]);
   };
 
   render() {

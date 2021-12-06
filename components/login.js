@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Dimensions, TextInput } from "react-native";
+import { Text, View, StyleSheet, Dimensions, TextInput, Alert } from "react-native";
 import { NativeBaseProvider, Button } from "native-base";
 import * as Font from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -52,7 +52,7 @@ export default class App extends Component {
     }
 
     if (!loginRes.success) {
-      alert('올바른 아이디 혹은 비밀번호를 입력해 주세요.');
+      Alert.alert("","올바른 아이디 혹은 비밀번호를 입력해 주세요.",[{text:"확인"}]);
       this.setState({ isLoading: false });
       return
     }

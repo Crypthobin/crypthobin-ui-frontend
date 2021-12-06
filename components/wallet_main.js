@@ -36,6 +36,8 @@ export default class App extends Component {
     this.setState({ isLoading: true })
     
     const res = await callBackend('GET', '/api/wallets')
+
+    if (this.state.data) res.data[0].qrKey = this.state.data.qrKey
     if (res.success) this.setState({ data: res.data[0]})
     
     this.setState({ isLoading: false })
@@ -83,10 +85,6 @@ export default class App extends Component {
           <View style={styles.header2}>
           <Text style={styles.header22}>
             {this.state.data?.alias || '지갑을 불러오는 중입니다.'} </Text>
-            {this.state.isLoading && <Text
-            style={{ alignSelf:"center"}}
-            > <ActivityIndicator  color="orange"
-            /></Text> }
             </View>
           <View style={styles.container2}>
             <ImageBackground

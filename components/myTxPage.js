@@ -91,10 +91,7 @@ const myTxPage = ({ walletId }) => {
           <View style={styles.header2}>
           <Text style={styles.header22}>
           거래 내역 ({txs.data.length}) </Text>
-            {isLoading && <Text
-            style={{ alignSelf:"center"}}
-            > <ActivityIndicator  color="orange"
-            /></Text> }
+            
             </View>
 
         

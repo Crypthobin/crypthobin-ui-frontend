@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Dimensions, TextInput } from "react-native";
+import { Text, View, StyleSheet, Dimensions, TextInput, Alert } from "react-native";
 import { Button, NativeBaseProvider } from "native-base";
 import { callBackend } from "../utils/backend";
 import AsyncStorageLib from "@react-native-async-storage/async-storage";
@@ -28,21 +28,21 @@ export default class App extends Component {
 
   async idCheck() {
     if (!this.state.id) {
-      alert("아이디를 입력해주세요");
+      Alert.alert("","아이디를 입력해 주세요.",[{text:"확인"}]);
       return;
     }
     if (white_space.test(this.state.id)) {
-      alert("공백은 포함할 수 없습니다.");
+      Alert.alert("","공백은 포함할 수 없습니다.",[{text:"확인"}]);
       return;
     }
     if (kor.test(this.state.id) || sym.test(this.state.id) || this.state.id.length < 5) {
-      alert("아이디는 5자 이상의 영문, 숫자만 사용할 수 있습니다.");
+      Alert.alert("","아이디는 5자 이상의 영문, 숫자만 사용할 수 있습니다.",[{text:"확인"}]);
       return;
     }
 
     const res = await callBackend('GET', `/auth/claimed?id=${this.state.id}`)
-    if (res.claimed) alert('중복된 아이디입니다, 다른 아이디를 입력해주세요.')
-    else alert('사용 가능한 아이디입니다.')
+    if (res.claimed) Alert.alert("중복된 아이디","다른 아이디를 입력해 주세요.",[{text:"확인"}]);
+    else Alert.alert("","사용 가능한 아이디입니다.",[{text:"확인"}]);
   }
 
   async handleSubmit() {
@@ -52,23 +52,23 @@ export default class App extends Component {
       password_confirm: this.state.password_confirm,
     };
     if (!user.id || !user.password || !user.password_confirm) {
-      alert("모두 입력해 주세요.");
+      Alert.alert("","모두 입력해 주세요.",[{text:"확인"}]);
       return;
     }
     else if (user.password_confirm != user.password) {
-      alert("비밀번호가 일치하지 않습니다.");
+      Alert.alert("","비밀번호가 일치하지 않습니다.",[{text:"확인"}]);
       return;
     }
     if (white_space.test(user.id) || white_space.test(user.password)) {
-      alert("공백은 포함할 수 없습니다.");
+      Alert.alert("","공백은 포함할 수 없습니다.",[{text:"확인"}]);
       return;
     }
     if (kor.test(this.state.id) || sym.test(this.state.id) || this.state.id.length < 5) {
-      alert("아이디는 5자 이상의 영문, 숫자만 사용할 수 있습니다.");
+      Alert.alert("","아이디는 5자 이상의 영문, 숫자만 사용할 수 있습니다.",[{text:"확인"}]);
       return;
     }
     if (!num.test(this.state.password) || !eng.test(this.state.password) || !sym.test(this.state.password) || kor.test(this.state.password) || this.state.password.length < 10) {
-      alert("비밀번호는 영문, 숫자, 특수문자 혼합 10자 이상이어야 합니다.");
+      Alert.alert("","비밀번호는 영문, 숫자, 특수문자 혼합 10자 이상이어야 합니다.",[{text:"확인"}]);
       return;
     }
 
@@ -85,17 +85,17 @@ export default class App extends Component {
     }
 
     if (registRes.error === 111) {
-      alert('중복된 아이디입니다, 다른 아이디를 입력해주세요.')
+      Alert.alert("중복된 아이디","다른 아이디를 입력해 주세요.",[{text:"확인"}]);
       return
     }
 
     if (registRes.error === 103) {
-      alert('빠짐 없이 입력해 주세요')
+      Alert.alert("","빠짐 없이 입력해 주세요.",[{text:"확인"}]);
       return
     }
 
     if (registRes.error === 112) {
-      alert('ID는 30자 미만이여야 합니다.')
+      Alert.alert("","아이디는 30자 미만이어야 합니다.",[{text:"확인"}]);
       return
     }
   }

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity, TextInput } from "react-native";
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, TextInput, Alert } from "react-native";
 import { Button, NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
@@ -92,11 +92,11 @@ export default class App extends Component {
       address: this.state.address,
     };
     if (!friend.name || !friend.address) {
-      alert("모두 입력해주세요");
+      Alert.alert("","모두 입력해 주세요.",[{text:"확인"}]);
       return;
     }
     if (friend.address.length != 43) {
-      alert("주소를 다시 한 번 확인해주세요.");
+      Alert.alert("","주소를 다시 한 번 확인해 주세요.",[{text:"확인"}]);
       return;
     }
 
@@ -162,10 +162,7 @@ export default class App extends Component {
           <View style={styles.header2}>
           <Text style={styles.header22}>
             주소록 </Text>
-            {this.state.isLoading && <Text
-            style={{ alignSelf:"center"}}
-            > <ActivityIndicator  color="orange"
-            /></Text> }
+            
             </View>
 <View
 style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRight: "2%" }}>
@@ -222,7 +219,7 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
                   if (JSON.stringify(this.state.check) != JSON.stringify(this.state.false_data)) {
                     this.setState({ open_del: true });
                   } else {
-                    alert("삭제할 주소를 선택해주세요.");
+                    Alert.alert("","삭제할 주소를 선택해 주세요.",[{text:"확인"}]);
                   }
                 }
               }}
