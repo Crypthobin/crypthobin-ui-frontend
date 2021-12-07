@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Keyboard, StyleSheet, Text, View, Dimensions, TouchableOpacity, TextInput, Alert } from "react-native";
+import { KeyboardAvoidingView, Keyboard, StyleSheet, Text, View, Dimensions, TouchableOpacity, TextInput, Alert } from "react-native";
 import { Button, NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,6 +14,8 @@ import { height, paddingTop } from "styled-system";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
+
+const white_space = /\s/;
 
 export default class App extends Component {
   constructor(props) {
@@ -104,6 +106,12 @@ export default class App extends Component {
       Alert.alert("","모두 입력해 주세요.",[{text:"확인"}]);
       return;
     }
+
+    if (white_space.test(friend.name)) {
+      Alert.alert("","이름에 공백은 포함할 수 없습니다.",[{text:"확인"}]);
+      return;
+    }
+
     if (friend.address.length != 43) {
       Alert.alert("","주소를 다시 한 번 확인해 주세요.",[{text:"확인"}]);
       return;
@@ -222,6 +230,8 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
                 }
               }}
               onPress={() => {
+                this.setState({ address: "" })
+                this.setState({ name: "" })
                 if (!this.state.edit) {
                   this.setState({ open_add: true })
                 } else {
@@ -347,14 +357,14 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
           { 
               alignSelf: "center",
               alignItems: 'center',
-              width: "85%",
-              height: "60%",
+              width: "90%",
+              height: 420,
               padding: "5%",
               backgroundColor: "white",
               borderRadius: 15,
               position: 'absolute',
               bottom: 0,
-              top:this.state.keyboardSpace? 20: 100,
+              top:this.state.keyboardSpace? 50: 120,  
           }
           }
           >
@@ -402,7 +412,6 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
                   </TouchableOpacity>
                   </View>
               </View>
-      
           </Modal>
           <Modal
             offset={this.state.offset}
@@ -580,7 +589,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontFamily: "My",
     height:"40%",
-    paddingTop:"2%"
+    paddingTop:"2%",
   },
   formArea: {
     width: "100%",
@@ -598,6 +607,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontFamily: "My",
     fontSize: 18,
+    marginTop:"2%"
   },
   small_btn: {
     alignSelf: "center",
