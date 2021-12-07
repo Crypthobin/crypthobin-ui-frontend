@@ -72,7 +72,10 @@ const myTxPage = ({ walletId }) => {
             </View>
         </View>
         <View style={{ alignSelf:"center", paddingTop: "20%", }}>
-          {!isLoading ? '거래 내역이 없습니다.' : 
+          {!isLoading ? <Text
+          style={{ fontFamily: "My", fontSize: 25}}
+          >
+            거래 내역이 없습니다.</Text> : 
           <View>
           <Text
           style={{ fontFamily: "My", fontSize: 25}}

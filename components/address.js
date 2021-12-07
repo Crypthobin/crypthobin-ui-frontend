@@ -235,7 +235,7 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
                 <Text
                 style={{textAlign:"center", fontFamily: "My", fontSize: 25}}
                 >
-                주소록을 불러오는 중입니다.</Text>
+                주소록을 불러오는 중입니다. <ActivityIndicator color="orange"/></Text>
                 :
               <Text
               style={{textAlign:"center", fontFamily: "My", fontSize: 25}}

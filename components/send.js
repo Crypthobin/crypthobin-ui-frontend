@@ -27,7 +27,8 @@ export default class App extends Component {
       open: false,
       select: false,
       isLoading: true,
-      pickerData: []
+      pickerData: [],
+      picker_value: 0,
     };
 
     this.fetchData()
@@ -90,6 +91,9 @@ export default class App extends Component {
 
     // 모달 창 닫기
     this.setState({ open: false, amount: 0 });
+    this.setState({ address: "" });
+    this.setState({ amount: "" });
+    this.setState({ select: false });
     Alert.alert("","송금이 완료되었습니다.",[{text:"확인"}]);
   };
 
@@ -138,6 +142,7 @@ export default class App extends Component {
             </View>
             {this.state.select &&
               <TextInput
+                value={this.state.address}
                 style={styles.textForm}
                 placeholder={"ex) pqc1qyau3w0qkv4v3rla6fq5enjy4yhs23mrhyw7sde"}
                 returnKeyType="done"
@@ -178,6 +183,7 @@ export default class App extends Component {
                 보낼 금액 (단위: TOL)</Text>
             </View>
             <TextInput
+            value={this.state.amount}
               style={styles.textForm}
               placeholder={"ex) 30"}
               returnKeyType="done"

@@ -94,10 +94,10 @@ export default class App extends Component {
       return
     }
 
-    if (registRes.error === 112) {
-      Alert.alert("","아이디는 30자 미만이어야 합니다.",[{text:"확인"}]);
+     if (registRes.error === 112) {
+       Alert.alert("","아이디는 30자 미만이어야 합니다.",[{text:"확인"}]);
       return
-    }
+}
   }
 
   render() {

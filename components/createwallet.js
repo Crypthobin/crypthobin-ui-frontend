@@ -14,7 +14,7 @@ export default class App extends Component {
     this.state = {
       user: {},
       wallet_name: "",
-      isLoading: false
+      isLoading: false,
     };
   }
 
@@ -40,7 +40,7 @@ export default class App extends Component {
       return
     }
 
-    this.props.navigation.navigate("After");
+    this.props.navigation.navigate("Login");
   }
 
   render() {
@@ -54,7 +54,7 @@ export default class App extends Component {
           >
             <Text style={styles.title}>밥그릇 회원가입 ( 2 / 2 )</Text>
           </View>
-          <Text style={styles.title2}>지갑 이름을 정해주세요.</Text>
+          <Text style={styles.title2}>지갑 이름을 정해주세요. (14자 이하)</Text>
           <View style={styles.formArea}>
             <TextInput
               style={styles.textForm}
@@ -67,17 +67,22 @@ export default class App extends Component {
               }}
             />
           </View>
+          
+          {this.state.isLoading && <Text
+            style={{ alignSelf:"center", fontSize: 20, color:"black", fontFamily:"My"}}
+            > 지갑 생성 중 .. <ActivityIndicator  color="orange"
+            /></Text>}
+          {!this.state.isLoading &&
           <Button
             block
             style={styles.register_btn}
             onPress={this.handleSubmit.bind(this)}
           >
-            {isLoading && <ActivityIndicator />}
-            {!isLoading &&
               <Text style={styles.registerText}>
                 가입하기
-              </Text>}
+              </Text>
           </Button>
+  }
         </View>
       </NativeBaseProvider>
     );
