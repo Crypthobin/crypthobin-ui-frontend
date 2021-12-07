@@ -359,8 +359,8 @@ export default class App extends Component {
             <Text style={{ fontSize: 23, fontFamily: "Mybold", paddingTop: "10%", paddingBottom: "10%" }}>아래 주소를 삭제하시겠습니까?</Text>
             <View style={{ width: "80%", height: "30%", backgroundColor: "#FFE5CC", padding: "3%", borderRadius: 10 }}>
               <ScrollView>
-                {this.state.addresses.map((card) => {
-                  if (card.isDel) {
+                {this.state.addresses.map((card, i) => {
+                  if (this.state.check[i]) {
                     return (
                       <Text style={{ fontFamily: "My", fontSize: 20, marginBottom: "3%", marginLeft: "5%" }}>{card.explanation}</Text>
                     );
