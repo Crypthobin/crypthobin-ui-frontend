@@ -41,10 +41,10 @@ export default class App extends Component {
 
     const res = await callBackend('GET', '/api/addresses')
 
-    var check_data = [];
+    var check_data = this.state.check;
     var false_data = [];
     for (var i = 0; i < this.state.addresses.length; i++) {
-      check_data[i] = false;
+      if (!check_data[i]) check_data[i] = false;
       false_data[i] = false;
     }
 
