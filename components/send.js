@@ -14,6 +14,8 @@ import { justifyContent, right, width } from "styled-system";
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
 
+const send_value = /(^[1-9][0-9]*[.][0-9]*[1-9])$|^[1-9][0-9]*$|^[0][.][0-9]*[1-9]$/;
+
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -64,13 +66,19 @@ export default class App extends Component {
       return;
     }
     if (send.address.length != 43) {
-      Alert.alert("","올바른 주소를 입력해 주세요.",[{text:"확인"}]);
+      Alert.alert("","올바른 주소를 입력해 주세요.\n(43자리)",[{text:"확인"}]);
       return;
     }
     if (send.balance-send.amount < 0) {
-      Alert.alert("","송금액은 내 잔액을 초과할 수 없습니다.",[{text:"확인"}]);
+      Alert.alert("잔액 부족","송금액은 내 잔액을 초과할 수 없습니다.",[{text:"확인"}]);
       return;
     }
+
+    if (!send_value.test(this.state.amount)) {
+      Alert.alert("송금액 형식 오류","송금액을 다시 한 번 확인해 주세요.\n(0TOL 송금 불가능)",[{text:"확인"}]);
+      return;
+    }
+
     if (this.state.select == true) {
       this.state.name = "(저장되지 않은 주소)";
     }
@@ -85,7 +93,8 @@ export default class App extends Component {
     })
 
     if (!sendRes.success) {
-      alert(`예상치 못한 오류: ${sendRes.message}\nfee를 낼수 있는 금액인지 확인해 보세요.`)
+      //alert(`예상치 못한 오류: ${sendRes.message}\n수수료를 낼수 있는 금액인지 확인해 보세요.`)
+      Alert.alert("송금 실패",`${sendRes.message}\n수수료를 낼 수 있느 금액이지 확인해 보세요.`,[{text:"확인"}]);
       return
     }
 
@@ -94,7 +103,7 @@ export default class App extends Component {
     this.setState({ address: "" });
     this.setState({ amount: "" });
     this.setState({ select: false });
-    Alert.alert("","송금이 완료되었습니다.",[{text:"확인"}]);
+    Alert.alert("송금 완료 !","거래가 확정되는 시간인 약 10초 정도 후, 거래내역에 표시됩니다.",[{text:"확인"}]);
   };
 
   render() {
@@ -186,6 +195,7 @@ export default class App extends Component {
             value={this.state.amount}
               style={styles.textForm}
               placeholder={"ex) 30"}
+              maxLength={10}
               returnKeyType="done"
               keyboardType="number-pad"
               onChangeText={amount => {

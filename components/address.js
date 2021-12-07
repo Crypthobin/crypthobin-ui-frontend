@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity, TextInput, Alert } from "react-native";
+import { Keyboard, StyleSheet, Text, View, Dimensions, TouchableOpacity, TextInput, Alert } from "react-native";
 import { Button, NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
@@ -30,8 +30,17 @@ export default class App extends Component {
       open_del: false,
       open_menu: [],
       isLoading: true,
-      addresses: []
+      addresses: [],
+      keyboardSpace:0
     };
+
+    Keyboard.addListener('keyboardDidShow',(frames)=>{
+      if (!frames.endCoordinates) return;
+      this.setState({keyboardSpace: frames.endCoordinates.height});
+  });
+  Keyboard.addListener('keyboardDidHide',(frames)=>{
+      this.setState({keyboardSpace:0});
+  });
 
     this.fetchData()
     setInterval(this.fetchData.bind(this), 10000);
@@ -332,7 +341,22 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
             open={this.state.open_add}
             modalDidOpen={() => console.log('modal did open')}
             modalDidClose={() => this.setState({ open_add: false })}
-            modalStyle={styles.modal}
+            //modalStyle={styles.modal}
+            position={"bottom"}
+            modalStyle={
+          { 
+              alignSelf: "center",
+              alignItems: 'center',
+              width: "85%",
+              height: "60%",
+              padding: "5%",
+              backgroundColor: "white",
+              borderRadius: 15,
+              position: 'absolute',
+              bottom: 0,
+              top:this.state.keyboardSpace? 20: 100,
+          }
+          }
           >
           <View
           style={{width:"100%", height:"30%",  justifyContent:"center"}}
@@ -431,6 +455,7 @@ const styles = StyleSheet.create({
     height: screenHeight - 60,
     alignItems: "center",
     backgroundColor: "white",
+    position: "absolute",
   },
   header: {
     width: screenWidth,
