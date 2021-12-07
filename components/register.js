@@ -71,32 +71,13 @@ export default class App extends Component {
       alert("비밀번호는 영문, 숫자, 특수문자 혼합 10자 이상이어야 합니다.");
       return;
     }
-
-    const registRes = await callBackend('POST', '/auth/regist', {
-      id: this.state.id,
-      password: this.state.password,
-      passwordCheck: this.state.password_confirm
-    })
-    
-    if (registRes.success) {
-      await AsyncStorageLib.setItem('token', registRes.data.token);
+    const res = await callBackend('GET', `/auth/claimed?id=${this.state.id}`)
+    if (res.claimed) alert('중복된 아이디입니다, 다른 아이디를 입력해주세요.')
+    else {
+      await AsyncStorageLib.setItem('reg_id', this.state.id);
+      await AsyncStorageLib.setItem('reg_pw', this.state.password);
+      await AsyncStorageLib.setItem('reg_pwc', this.state.password_confirm);
       this.props.navigation.navigate("Create_wallet");
-      return
-    }
-
-    if (registRes.error === 111) {
-      alert('중복된 아이디입니다, 다른 아이디를 입력해주세요.')
-      return
-    }
-
-    if (registRes.error === 103) {
-      alert('빠짐 없이 입력해 주세요')
-      return
-    }
-
-    if (registRes.error === 112) {
-      alert('ID는 30자 미만이여야 합니다.')
-      return
     }
   }
 
