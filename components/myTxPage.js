@@ -69,7 +69,7 @@ const myTxPage = ({ walletId }) => {
           <Text style={styles.header2}>
             거래 내역 ({txs.data.length})</Text>
         </View>
-        <Text style={{ alignSelf:"center", paddingTop: "20%", fontFamily: "My", fontSize: 25 }}>'거래 내역이 없습니다.</Text>
+        <Text style={{ alignSelf:"center", paddingTop: "20%", fontFamily: "My", fontSize: 25 }}>거래 내역이 없습니다.</Text>
       </NativeBaseProvider>
     );
   }
