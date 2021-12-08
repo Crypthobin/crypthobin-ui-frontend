@@ -53,7 +53,7 @@ export default function App() {
 
   return (
     <View
-      style={{height: screenHeight, backgroundColor:"blue" }}
+      style={{height: "100%" }}
       onLayout={onLayoutRootView}>
       <Start/>
     </View>

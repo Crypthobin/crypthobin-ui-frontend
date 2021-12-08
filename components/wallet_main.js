@@ -82,6 +82,7 @@ export default class App extends Component {
               }}
             />
           </View>
+      
           <View style={styles.header2}>
           <Text style={styles.header22}>
             {this.state.data?.alias || '지갑을 불러오는 중입니다.'} </Text>
@@ -171,7 +172,8 @@ export default class App extends Component {
               </TouchableOpacity>
             </View>
           </Modal>
-        </View>
+          </View>
+  
       </NativeBaseProvider>
     );
   }
@@ -200,11 +202,11 @@ const styles = StyleSheet.create({
   },
   header: {
     width: screenWidth,
-    backgroundColor: "white",
+    backgroundColor: "pink",
     borderBottomColor: "black",
     borderBottomWidth: 2,
-    paddingBottom: "0%",
-    paddingTop: "5%",
+    marginTop:"10%",
+    //height: 50,
     flexDirection: "row",
     alignItems: 'center',
     justifyContent: "space-between",
@@ -218,10 +220,11 @@ const styles = StyleSheet.create({
   },
   logoText: {
     textAlign: "center",
-    fontSize: 35,
+    fontSize: 30,
     color: "black",
     fontFamily: "Mybold",
     paddingLeft: "6%",
+    height:"100%",
   },
   appinfo: {
     paddingRight: "5%",

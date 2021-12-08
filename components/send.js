@@ -352,8 +352,9 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: screenWidth,
-    height: screenHeight,
+    height: screenHeight - 60,
     alignItems: "center",
     backgroundColor: "white",
   },

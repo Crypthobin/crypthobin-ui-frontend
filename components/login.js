@@ -122,7 +122,7 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     width: screenWidth,
-    height: screenHeight,
+    height: "100%",
     backgroundColor: "white",
   },
   title: {

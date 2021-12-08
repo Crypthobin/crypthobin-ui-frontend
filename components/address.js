@@ -462,11 +462,12 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: screenWidth,
-    height: screenHeight - 60,
+    height: screenHeight-60,
     alignItems: "center",
     backgroundColor: "white",
-    position: "absolute",
+   // position: "absolute",
   },
   header: {
     width: screenWidth,

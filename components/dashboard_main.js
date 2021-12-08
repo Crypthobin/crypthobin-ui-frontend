@@ -144,6 +144,7 @@ const Dashboard = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: screenWidth,
     height: screenHeight - 60,
     alignItems: "center",
