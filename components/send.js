@@ -69,7 +69,7 @@ export default class App extends Component {
       Alert.alert("","올바른 주소를 입력해 주세요.\n(43자리)",[{text:"확인"}]);
       return;
     }
-    if (send.balance-send.amount < 0) {
+    if (send.balance < 0) {
       Alert.alert("잔액 부족","송금액은 내 잔액을 초과할 수 없습니다.",[{text:"확인"}]);
       return;
     }
@@ -89,12 +89,12 @@ export default class App extends Component {
     // 송금 프로세스
     const sendRes = await callBackend('POST', `/api/wallets/${this.state.walletId}/remittance`, {
       to: this.state.address,
-      amount: parseInt(this.state.amount)
+      amount: parseFloat(this.state.amount)
     })
 
     if (!sendRes.success) {
       //alert(`예상치 못한 오류: ${sendRes.message}\n수수료를 낼수 있는 금액인지 확인해 보세요.`)
-      Alert.alert("송금 실패",`${sendRes.message}\n수수료를 낼 수 있느 금액이지 확인해 보세요.`,[{text:"확인"}]);
+      Alert.alert("송금 실패",`${sendRes.message}\n수수료를 낼 수 있는 금액이지 확인해 보세요.`,[{text:"확인"}]);
       return
     }
 
@@ -192,7 +192,7 @@ export default class App extends Component {
                 보낼 금액 (단위: TOL)</Text>
             </View>
             <TextInput
-            value={this.state.amount}
+              value={this.state.amount}
               style={styles.textForm}
               placeholder={"ex) 30"}
               maxLength={10}
@@ -223,7 +223,7 @@ export default class App extends Component {
             }
             }>(송금 후 잔액: {this.state.isLoading ? <ActivityIndicator color="orange"
             size={15}
-            /> : this.state.balance-this.state.amount} TOL)</Text>
+            /> : parseFloat(this.state.balance-this.state.amount)} TOL)</Text>
             </View>
             
           </View>

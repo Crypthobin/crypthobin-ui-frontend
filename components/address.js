@@ -53,10 +53,10 @@ export default class App extends Component {
 
     const res = await callBackend('GET', '/api/addresses')
 
-    var check_data = [];
+    var check_data =  this.state.check;
     var false_data = [];
     for (var i = 0; i < this.state.addresses.length; i++) {
-      check_data[i] = false;
+      if (!check_data[i]) check_data[i] = false;
       false_data[i] = false;
     }
 
@@ -81,7 +81,8 @@ export default class App extends Component {
       if (this.state.check[i])  {
         const delRes = await callBackend('DELETE', `/api/addresses/${this.state.addresses[i].id}`)
         if (!delRes.success) {
-          alert(`알 수 없는 오류 발생: ${delRes.message}`)
+          //alert(`알 수 없는 오류 발생: ${delRes.message}`)
+          Alert.alert("오류","다시 한 번 시도해 주세요.",[{text:"확인"}]);
           return
         }
       }
@@ -123,7 +124,8 @@ export default class App extends Component {
     })
 
     if (!addRes.success) {
-      alert(`알 수 없는 오류 발생: ${addRes.message}`)
+      //alert(`알 수 없는 오류 발생: ${addRes.message}`)
+      Alert.alert("오류","이미 저장된 이름 혹은 주소로는 저장할 수 없습니다.",[{text:"확인"}]);
       return
     }
 
@@ -430,8 +432,8 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
             <Text style={{ height:"10%", fontSize: 23, fontFamily: "Mybold"  }}>아래 주소를 삭제하시겠습니까?</Text>
             <View style={{ width: "80%", height: "40%", backgroundColor: "#FFE5CC", padding: "3%", borderRadius: 10, marginBottom:"5%" }}>
               <ScrollView>
-                {this.state.addresses.map((card) => {
-                  if (card.isDel) {
+              {this.state.addresses.map((card, i) => {
+                  if (this.state.check[i]) {
                     return (
                       <Text style={{ fontFamily: "My", fontSize: 20, marginBottom: "3%", marginLeft: "5%" }}>{card.explanation}</Text>
                     );

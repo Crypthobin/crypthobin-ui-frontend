@@ -72,31 +72,15 @@ export default class App extends Component {
       return;
     }
 
-    const registRes = await callBackend('POST', '/auth/regist', {
-      id: this.state.id,
-      password: this.state.password,
-      passwordCheck: this.state.password_confirm
-    })
-    
-    if (registRes.success) {
-      await AsyncStorageLib.setItem('token', registRes.data.token);
+    const res = await callBackend('GET', `/auth/claimed?id=${this.state.id}`)
+    if (res.claimed) Alert.alert("중복된 아이디","다른 아이디를 입력해 주세요.",[{text:"확인"}]);
+    else {
+      await AsyncStorageLib.setItem('reg_id', this.state.id);
+      await AsyncStorageLib.setItem('reg_pw', this.state.password);
+      await AsyncStorageLib.setItem('reg_pwc', this.state.password_confirm);
+
       this.props.navigation.navigate("Create_wallet");
-      return
-    }
-
-    if (registRes.error === 111) {
-      Alert.alert("중복된 아이디","다른 아이디를 입력해 주세요.",[{text:"확인"}]);
-      return
-    }
-
-    if (registRes.error === 103) {
-      Alert.alert("","빠짐 없이 입력해 주세요.",[{text:"확인"}]);
-      return
-    }
-
-     if (registRes.error === 112) {
-       Alert.alert("","아이디는 30자 미만이어야 합니다.",[{text:"확인"}]);
-      return
+     
 }
   }
 

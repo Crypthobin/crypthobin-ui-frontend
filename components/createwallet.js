@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Dimensions, TextInput, Image, Alert } from "rea
 import { Button, NativeBaseProvider } from "native-base";
 import { callBackend } from "../utils/backend";
 import { ActivityIndicator } from "react-native-paper";
+import AsyncStorageLib from "@react-native-async-storage/async-storage";
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -29,6 +30,17 @@ export default class App extends Component {
       this.setState({ isLoading: false });
       return;
     }
+
+    const id = await AsyncStorageLib.getItem('reg_id')
+    const password = await AsyncStorageLib.getItem('reg_pw')
+    const passwordCheck = await AsyncStorageLib.getItem('reg_pwc')
+
+    const registRes = await callBackend('POST', '/auth/regist', {
+      id, password, passwordCheck
+    });
+
+    await AsyncStorageLib.setItem('token', registRes.data.token)
+
 
     const createWalletRes =  await callBackend('POST', '/api/wallets', {
       alias: user.wallet_name

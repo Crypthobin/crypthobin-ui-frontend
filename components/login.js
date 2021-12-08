@@ -101,6 +101,9 @@ export default class App extends Component {
               style={styles.registerText}
               onPress={() => {
                 this.props.navigation.navigate("Register");
+                this.setState({ id: "" });
+      this.setState({ password: "" });
+      this.setState({ isLoading: false });
               }}
             >
               <Text style={{ color: "black", textDecorationLine: "underline" }}>
