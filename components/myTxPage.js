@@ -130,10 +130,9 @@ const myTxPage = ({ walletId }) => {
                     style={{
                       flexDirection: "row",
                       justifyContent: "space-between",
-                      padding: "3%",
                     }}
                   >
-                    <View style={{ flexDirection: "column", width: "20%", justifyContent: "center" }}>
+                    <View style={{ flexDirection: "column", width: "20%", justifyContent: "center"}}>
                       {card.category == "send" &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-made" size={30} color="orange" />
@@ -148,12 +147,14 @@ const myTxPage = ({ walletId }) => {
                         <Text style={{ fontSize: 15, fontFamily: "My", }}>{moment(card.timerecived).format('YYYY.MM.DD')}</Text>
                       </View>
                     </View>
+                    <View style = {{backgroundColor:"yellow", flexDirection:"column", width:"80%", height:"100%"}}>
                     <View style={styles.address}>
-                      <Text style={{ fontSize: 20, fontFamily: "My", }}>{addresses?.find((v) => v.otherAddresses.includes(card.address))?.explanation || '(등록되지 않은 월렛)'}</Text>
-                      <Text style={{ fontSize: 20, fontFamily: "My", color: "orange" }}>{card.address.substring(0, 10)}...{card.address.substring(38)}</Text>
+                      <Text style={{ fontSize: 20, fontFamily: "My",alignSelf: "flex-start" }}>{addresses?.find((v) => v.otherAddresses.includes(card.address))?.explanation || '(등록되지 않은 월렛)'}</Text>
+                      <Text style={{ fontSize: 20, fontFamily: "My", color: "orange", alignSelf: "flex-start" }}>{card.address.substring(0, 12)}...{card.address.substring(32)}</Text>
                     </View>
                     <View style={styles.amount}>
                       <Text style={{ fontSize: 25, fontFamily: "My", alignSelf: "flex-end", }}>{Math.abs(card.amount)} TOL</Text>
+                    </View>
                     </View>
                   </View>
                 </View>
@@ -192,27 +193,28 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 10,
     borderColor: "black",
+    padding:"3%",
     marginBottom: "2%",
   },
   type: {
-    padding: "2%",
+    
     alignSelf: "center",
   },
   date: {
-    padding: "4%",
+    
     alignSelf: "center",
   },
   address: {
-    paddingLeft: "5%",
     justifyContent: "center",
-    width: "45%",
+    width: "100%",
     backgroundColor: "white",
-    alignItems: "center"
+    alignItems: "center",
+    paddingLeft: "3%"
   },
   amount: {
     paddingRight: "4%",
     justifyContent: "center",
-    width: "35%",
+    width: "100%",
     backgroundColor: "white"
   },
   text1: {
