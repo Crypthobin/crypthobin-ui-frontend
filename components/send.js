@@ -14,7 +14,50 @@ import { justifyContent, right, width } from "styled-system";
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
 
-const send_value = /(^[1-9][0-9]*[.][0-9]*[1-9])$|^[1-9][0-9]*$|^[0][.][0-9]*[1-9]$/;
+const send_value = /(^[1-9][0-9]*[.][0-9]*[1-9])$|^[1-9][0-9]*$|^[0]+[.][0-9]*[1-9]$|(^[0]+[.][0-9]*[1-9]+[0]+)$/;
+
+function isInt(n){
+  return Number(n) === n && n % 1 === 0;
+}
+
+function isFloat(n){
+  return Number(n) === n && n % 1 !== 0;
+}
+
+function calc(arr){
+  var decimalN = 0; 
+
+  for(var j=0; j<arr.length; j++ ){
+    
+    var n = arr[j]; 
+   
+     if ( !isInt(n) && !isFloat(n) ){
+       return("오류");
+     }
+
+     if(!Number.isInteger(n)){ 
+       var d = String(n).split('.')[1].length; 
+       if(decimalN < d) decimalN = d; 
+      } 
+    } 
+    //return decimalN;
+    var res = parseFloat(arr[0]-arr[1]).toFixed(decimalN);
+    return res;
+  }
+
+ function search(str) {
+  var count = 0;
+  var searchChar = '.'; 
+  var pos = str.indexOf(searchChar);
+
+  while (pos !== -1) {
+    count++;
+    pos = str.indexOf(searchChar, pos + 1);
+  }
+
+  return count;
+   
+ }
 
 export default class App extends Component {
   constructor(props) {
@@ -101,7 +144,7 @@ export default class App extends Component {
     // 모달 창 닫기
     this.setState({ open: false, amount: 0 });
     this.setState({ address: "" });
-    this.setState({ amount: "" });
+    this.setState({ amount: 0 });
     this.setState({ select: false });
     Alert.alert("송금 완료 !","거래가 확정되는 시간인 약 10초 정도 후, 거래내역에 표시됩니다.",[{text:"확인"}]);
   };
@@ -199,7 +242,7 @@ export default class App extends Component {
               returnKeyType="done"
               keyboardType="number-pad"
               onChangeText={amount => {
-                if (amount == "") {
+                if (amount == "" || search(amount) > 1 ) { // 혹은 .이 여러번 들어가면
                   this.setState({ amount: 0 });
                 } else {
                   this.setState({ amount });
@@ -223,7 +266,8 @@ export default class App extends Component {
             }
             }>(송금 후 잔액: {this.state.isLoading ? <ActivityIndicator color="orange"
             size={15}
-            /> : parseFloat(this.state.balance-this.state.amount)} TOL)</Text>
+            /> :   calc([parseFloat(this.state.balance),parseFloat(this.state.amount)])
+            } TOL)</Text>
             </View>
             
           </View>

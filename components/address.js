@@ -113,8 +113,8 @@ export default class App extends Component {
       return;
     }
 
-    if (friend.address.length != 43) {
-      Alert.alert("","주소를 다시 한 번 확인해 주세요.",[{text:"확인"}]);
+    if (friend.address.length != 43 || !(/pqc/).test(friend.address)) {
+      Alert.alert("주소 오류","bobtol 주소가 맞는지 확인해 주세요.",[{text:"확인"}]);
       return;
     }
 
