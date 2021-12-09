@@ -202,11 +202,11 @@ const styles = StyleSheet.create({
   },
   header: {
     width: screenWidth,
-    backgroundColor: "pink",
+    backgroundColor: "white",
     borderBottomColor: "black",
     borderBottomWidth: 2,
-    marginTop:"10%",
-    //height: 50,
+    paddingBottom: "0%",
+    paddingTop: "5%",
     flexDirection: "row",
     alignItems: 'center',
     justifyContent: "space-between",
@@ -220,11 +220,10 @@ const styles = StyleSheet.create({
   },
   logoText: {
     textAlign: "center",
-    fontSize: 30,
+    fontSize: 35,
     color: "black",
     fontFamily: "Mybold",
     paddingLeft: "6%",
-    height:"100%",
   },
   appinfo: {
     paddingRight: "5%",
