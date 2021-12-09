@@ -63,7 +63,7 @@ export default class App extends Component {
   }
 
   async onDel() {
-    for (var i = 0; i < this.state.check.length; i++) {
+    for (var i = 0; i < this.state.addresses.length; i++) {
 
       // -- backend
       if (this.state.check[i])  {
@@ -189,7 +189,7 @@ export default class App extends Component {
                   );
                 } else {
 
-                  for (i = 0; i < this.state.check.length; i++) {
+                  for (i = 0; i < this.state.addresses.length; i++) {
                     if (this.state.check[i]) {
                       count += 1;
                     }
@@ -206,7 +206,7 @@ export default class App extends Component {
                 if (!this.state.edit) {
                   this.setState({ open_add: true })
                 } else {
-                  if (JSON.stringify(this.state.check) != JSON.stringify(this.state.false_data)) {
+                  if (this.state.check.slice(0, this.state.address.length).find((v) => v)) {
                     this.setState({ open_del: true });
                   } else {
                     alert("삭제할 주소를 선택해주세요.");
