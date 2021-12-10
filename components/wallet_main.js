@@ -11,6 +11,7 @@ import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-easy-toast';
 import { callBackend } from "../utils/backend";
 
+
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
 
@@ -186,6 +187,7 @@ const styles = StyleSheet.create({
     height: screenHeight - 60,
     alignItems: "center",
     backgroundColor: "white",
+    paddingTop: Platform.OS === `ios` ? 0 : Constants.statusBarHeight,
   },
   container2: {
     width: "90%",

@@ -26,7 +26,8 @@ const temp = createStackNavigator(
     const Navi = createAppContainer(temp);
 
     return (
-        <NavigationContainer>
+        <NavigationContainer
+        >
           <Navi />
       </NavigationContainer>
       );
