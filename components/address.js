@@ -11,6 +11,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { callBackend } from "../utils/backend";
 import { Menu, MenuItem } from 'react-native-material-menu';
 import { height, paddingTop } from "styled-system";
+import { LogBox } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -153,6 +154,7 @@ export default class App extends Component {
   }
 
   render() {
+    LogBox.ignoreAllLogs();
     return (
       <NativeBaseProvider>
         <View style={styles.container}>
@@ -469,6 +471,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
    // position: "absolute",
+   paddingTop: Platform.OS === `ios` ? 0 : 10 ,
   },
   header: {
     width: screenWidth,

@@ -8,6 +8,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { callBackend } from "../utils/backend";
 import { displayedAt } from "../utils/convert";
 import { width } from "styled-system";
+import { LogBox } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -31,6 +32,8 @@ const Dashboard = ({ navigation }) => {
     if (res.success) setNetworkData(res.data)
     setIsLoading(false)
   }
+
+  LogBox.ignoreAllLogs();
   
   return (
     <NativeBaseProvider>
@@ -149,6 +152,7 @@ const styles = StyleSheet.create({
     height: screenHeight - 60,
     alignItems: "center",
     backgroundColor: "white",
+    paddingTop: Platform.OS === `ios` ? 0 : 10 ,
   },
   header: {
     width: screenWidth,

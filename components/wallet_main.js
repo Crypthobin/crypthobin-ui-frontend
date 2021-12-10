@@ -1,15 +1,16 @@
 import React, { Component, useCallback, useMemo } from "react";
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity, ImageBackground, Image } from "react-native";
+import { Alert, BackHandler, StyleSheet, Text, View, Dimensions, TouchableOpacity, ImageBackground, Image } from "react-native";
 import { Button, NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { ActivityIndicator, IconButton } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import Constants from "expo-constants";
 import Modal from 'react-native-simple-modal';
 import MyTxPage from './myTxPage';
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-easy-toast';
 import { callBackend } from "../utils/backend";
+import Constants from 'expo-constants';
+import { LogBox } from 'react-native';
 
 
 const screenWidth = Math.round(Dimensions.get("window").width);
@@ -18,6 +19,9 @@ const screenHeight = Math.round(Dimensions.get("window").height);
 export default class App extends Component {
   constructor(props) {
     super(props);
+
+    //Text.defaultProps = Text.defaultProps || {};
+    //Text.defaultProps.allowFontScaling = false;
 
     this.state = {
       open: false,
@@ -28,6 +32,8 @@ export default class App extends Component {
       data: null,
       toast:"",
     };
+
+    //this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
 
     this.fetchData()
     setInterval(this.fetchData.bind(this), 10000)
@@ -59,12 +65,26 @@ export default class App extends Component {
 
 
 
+  // handleBackPress = () => {
+  //   Alert.alert("", "로그아웃 하시겠습니까?", [
+  //     {
+  //       text: "취소",
+  //       onPress: () => {return true} ,
+  //     },
+  //     { text: "확인", onPress: () => {this.props.navigation.navigate("Login");} }
+  //   ]);
+  //   return true;
+  // };
+
+
+
   showCopyToast = () => {
     //toastRef.current.show('주소가 복사되었습니다.');
     toastRef="f"
   };
   
   render() {
+    LogBox.ignoreAllLogs();
     return (
       <NativeBaseProvider>
         <View style={styles.container}>
@@ -187,7 +207,7 @@ const styles = StyleSheet.create({
     height: screenHeight - 60,
     alignItems: "center",
     backgroundColor: "white",
-    paddingTop: Platform.OS === `ios` ? 0 : Constants.statusBarHeight,
+    paddingTop: Platform.OS === `ios` ? 0 : 10 ,
   },
   container2: {
     width: "90%",

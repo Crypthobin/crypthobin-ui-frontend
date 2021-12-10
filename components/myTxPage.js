@@ -11,6 +11,8 @@ import { ActivityIndicator, IconButton } from 'react-native-paper';
 import { callBackend } from '../utils/backend';
 import moment from 'moment';
 
+import { LogBox } from 'react-native';
+
 const screenWidth = Math.round(Dimensions.get("window").width);
 
 const myTxPage = ({ walletId }) => {
@@ -61,6 +63,8 @@ const myTxPage = ({ walletId }) => {
     fetchData();
     setInterval(fetchData, 10000);
   }, [])
+
+  LogBox.ignoreAllLogs();
 
   if (txs.data.length == 0) {
     return (

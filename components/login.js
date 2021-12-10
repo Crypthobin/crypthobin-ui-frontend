@@ -4,6 +4,7 @@ import { NativeBaseProvider, Button } from "native-base";
 import * as Font from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Wallet_main from "./wallet_main";
+import { LogBox } from 'react-native';
 
 import { callBackend } from "../utils/backend";
 import { ActivityIndicator } from "react-native-paper";
@@ -69,6 +70,7 @@ export default class App extends Component {
   };
 
   render() {
+    LogBox.ignoreAllLogs();
     if (this.state.fontsLoaded) {
       return (
         <NativeBaseProvider>
@@ -122,10 +124,11 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     width: screenWidth,
-    height: "100%",
+    //height: "100%",
     height: screenHeight,
-    backgroundColor: "pink",
+    backgroundColor: "white",
     flex: 1,
+    position: 'absolute',
   },
   title: {
     fontSize: 40,

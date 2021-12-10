@@ -10,6 +10,7 @@ import Checkbox from 'expo-checkbox';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { callBackend } from "../utils/backend";
 import { justifyContent, right, width } from "styled-system";
+import { LogBox } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -150,6 +151,8 @@ export default class App extends Component {
   };
 
   render() {
+    LogBox.ignoreAllLogs();
+
     const placeholder = {
       label: '주소를 선택해주세요.',
       value: null,
@@ -357,6 +360,7 @@ const styles = StyleSheet.create({
     height: screenHeight - 60,
     alignItems: "center",
     backgroundColor: "white",
+    paddingTop: Platform.OS === `ios` ? 0 : 10 ,
   },
   header: {
     width: screenWidth,

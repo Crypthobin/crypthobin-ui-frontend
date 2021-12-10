@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Dimensions, TextInput, Alert } from "react-nati
 import { Button, NativeBaseProvider } from "native-base";
 import { callBackend } from "../utils/backend";
 import AsyncStorageLib from "@react-native-async-storage/async-storage";
+import { LogBox } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -85,6 +86,7 @@ export default class App extends Component {
   }
 
   render() {
+    LogBox.ignoreAllLogs();
     return (
       <NativeBaseProvider>
         <View style={styles.container}>
@@ -179,10 +181,12 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: screenWidth,
     height: screenHeight,
     backgroundColor: "white",
     alignSelf: "center",
+    position: 'absolute',
   },
   title: {
     fontSize: 25,
@@ -202,7 +206,7 @@ const styles = StyleSheet.create({
   },
   formArea: {
     width: "80%",
-    height: "20%",
+    height: "20%",  
     marginTop: "20%",
     paddingBottom: '10%',
     alignSelf: "center",

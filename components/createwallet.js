@@ -4,6 +4,8 @@ import { Button, NativeBaseProvider } from "native-base";
 import { callBackend } from "../utils/backend";
 import { ActivityIndicator } from "react-native-paper";
 import AsyncStorageLib from "@react-native-async-storage/async-storage";
+import Toast from 'react-native-easy-toast';
+import { LogBox } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -16,6 +18,7 @@ export default class App extends Component {
       user: {},
       wallet_name: "",
       isLoading: false,
+      toast:"",
     };
   }
 
@@ -52,10 +55,13 @@ export default class App extends Component {
       return
     }
 
+   // this.toast.show('회원가입 완료');
+   // this.setState({ isLoading: false });
     this.props.navigation.navigate("Login");
   }
 
   render() {
+    LogBox.ignoreAllLogs();
     return (
       <NativeBaseProvider>
         <View style={styles.container}>
@@ -95,6 +101,19 @@ export default class App extends Component {
               </Text>
           </Button>
   }
+
+
+<Toast ref={(toast) => this.toast = toast}
+            
+            positionValue={screenHeight*0.5}
+             fadeInDuration={200}
+             fadeOutDuration={1000}
+             style={{backgroundColor:'rgba(0, 0, 0, 0.7)'}}
+             textStyle={{fontFamily:"My", color:"white", fontSize:20}}
+            
+            />
+
+
         </View>
       </NativeBaseProvider>
     );
@@ -103,9 +122,11 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: screenWidth,
     height: screenHeight,
     backgroundColor: "white",
+    position: 'absolute',
   },
   title: {
     fontSize: 25,
@@ -130,8 +151,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   textForm: {
-    width: '70%',
-    height: '40%',
+    width: "70%",
+    height: "40%",
     paddingLeft: "5%",
     paddingRight: "5%",
     marginBottom: "5%",
