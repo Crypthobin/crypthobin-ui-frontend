@@ -24,11 +24,6 @@ const myTxPage = ({ walletId }) => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const handlePageChange = (page) => {
-    if (0 < page && page <= pages) {
-      setTxs({ ...txs, currentPage: page });
-    }
-  }
 
   const { data, pageSize, currentPage } = txs;
   const pagedTxs = paginate(data, currentPage, pageSize);
@@ -37,6 +32,11 @@ const myTxPage = ({ walletId }) => {
   const pages = pageCount;
   const [addresses, setAddresses] = useState([])
 
+  const handlePageChange = (page) => {
+    if (0 < page && page <= pages) {
+      setTxs({ ...txs, currentPage: page });
+    }
+  }
 
   async function fetchData() {
     setIsLoading(true);
@@ -54,7 +54,7 @@ const myTxPage = ({ walletId }) => {
     }
     
     if (addrRes.success) setAddresses(addrRes.data)
-    setTxs({ ...txs, data: txs.data.filter((v) => v.confirmations).sort((a, b) => b.time - a.time) })
+    setTxs({ ...txs, data: txs.data.sort((a, b) => b.time - a.time) })
 
     setIsLoading(false);
   }
@@ -137,27 +137,47 @@ const myTxPage = ({ walletId }) => {
                     }}
                   >
                     <View style={{ flexDirection: "column", width: "20%", justifyContent: "center"}}>
-                      {card.category == "send" &&
+                      {(card.category == "send" && card.confirmations == "1") &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-made" size={30} color="orange" />
                         </View>
                       }
-                      {card.category == "receive" &&
+                      {(card.category == "send" && card.confirmations == "0") &&
+                        <View style={styles.type}>
+                          <MaterialIcons name="call-made" size={30} color="#BDBDBD" />
+                        </View>
+                      }
+                      {(card.category == "receive" && card.confirmations == "1") &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-received" size={30} color="orange" />
+                        </View>
+                      }
+                      {(card.category == "receive" && card.confirmations == "0") &&
+                        <View style={styles.type}>
+                          <MaterialIcons name="call-received" size={30} color="#BDBDBD" />
                         </View>
                       }
                       <View style={styles.date}>
                         <Text style={{ fontSize: 15, fontFamily: "My", }}>{moment(card.timerecived).format('YYYY.MM.DD')}</Text>
                       </View>
                     </View>
-                    <View style = {{backgroundColor:"yellow", flexDirection:"column", width:"80%", height:"100%"}}>
+                    <View style = {{ flexDirection:"column", width:"80%", height:"100%"}}>
                     <View style={styles.address}>
-                      <Text style={{ fontSize: 20, fontFamily: "My",alignSelf: "flex-start" }}>{addresses?.find((v) => v.otherAddresses.includes(card.address))?.explanation || '(등록되지 않은 월렛)'}</Text>
+                      <Text style={{ fontSize: 20, fontFamily: "My",alignSelf: "flex-start" }}>{addresses?.find((v) => v.walletAddress === card.address || v.otherAddresses.includes(card.address))?.explanation || '(등록되지 않은 월렛)'}</Text>
                       <Text style={{ fontSize: 20, fontFamily: "My", color: "orange", alignSelf: "flex-start" }}>{card.address.substring(0, 12)}...{card.address.substring(32)}</Text>
                     </View>
+                    <View style={{flexDirection:"row", paddingTop:"2%" }}>
+                      <View style={styles.confirm}>
+    { card.confirmations == "0" &&
+                      <Text style={{ fontSize: 20, fontFamily: "My", alignSelf: "flex-start", }}>확정되지 않은 거래</Text>                
+    }
+    { card.confirmations == "1" &&
+                      <Text style={{ fontSize: 28, fontFamily: "My", alignSelf: "flex-start", }}>확정된 거래</Text>                
+    }
+                      </View>
                     <View style={styles.amount}>
                       <Text style={{ fontSize: 25, fontFamily: "My", alignSelf: "flex-end", }}>{Math.abs(card.amount)} TOL</Text>
+                    </View>
                     </View>
                     </View>
                   </View>
@@ -218,8 +238,15 @@ const styles = StyleSheet.create({
   amount: {
     paddingRight: "4%",
     justifyContent: "center",
-    width: "100%",
+    width: "50%",
     backgroundColor: "white"
+  },
+  confirm: {
+    paddingRight: "4%",
+    justifyContent: "center",
+    width: "50%",
+    backgroundColor: "white",
+    paddingLeft: "3%",
   },
   text1: {
     fontSize: 20,

@@ -15,7 +15,7 @@ import { LogBox } from 'react-native';
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
 
-const send_value = /(^[1-9][0-9]*[.][0-9]*[1-9])$|^[1-9][0-9]*$|^[0]+[.][0-9]*[1-9]$|(^[0]+[.][0-9]*[1-9]+[0]+)$/;
+const send_value = /^[0-9]+[.][0-9]*[1-9]$|^[0-9]*[1-9]+[0]*$|^[0]+[.][0-9]*[1-9]$|(^[0-9]+[.][0-9]*[1-9]+[0]+)$|^[0-9]*[1-9]+[0-9]*[.][0]+$/;
 
 function isInt(n){
   return Number(n) === n && n % 1 === 0;
@@ -106,10 +106,10 @@ export default class App extends Component {
       balance: this.state.balance - this.state.amount,
     };
     if (!send.address || !send.amount) {
-      Alert.alert("","모두 입력해 주세요.",[{text:"확인"}]);
+      Alert.alert("","주소와 금액을 정확히 입력해 주세요.",[{text:"확인"}]);
       return;
     }
-    if (send.address.length != 43) {
+    if (send.address.length != 43  || !(/pqc/).test(this.state.address)) {
       Alert.alert("","올바른 주소를 입력해 주세요.\n(43자리)",[{text:"확인"}]);
       return;
     }
@@ -138,7 +138,7 @@ export default class App extends Component {
 
     if (!sendRes.success) {
       //alert(`예상치 못한 오류: ${sendRes.message}\n수수료를 낼수 있는 금액인지 확인해 보세요.`)
-      Alert.alert("송금 실패",`${sendRes.message}\n수수료를 낼 수 있는 금액이지 확인해 보세요.`,[{text:"확인"}]);
+      Alert.alert("송금 실패",`${sendRes.message}\n수수료를 낼 수 있는 금액인지 확인해 보세요.`,[{text:"확인"}]);
       return
     }
 
@@ -147,7 +147,7 @@ export default class App extends Component {
     this.setState({ address: "" });
     this.setState({ amount: 0 });
     this.setState({ select: false });
-    Alert.alert("송금 완료 !","거래가 확정되는 시간인 약 10초 정도 후, 거래내역에 표시됩니다.",[{text:"확인"}]);
+    Alert.alert("","송금 완료 !",[{text:"확인"}]);
   };
 
   render() {
@@ -188,11 +188,16 @@ export default class App extends Component {
                 <View style={{ flexDirection: "row", width:"40%", justifyContent:"flex-end"}}>
               <Checkbox
                 value={this.state.select}
-                onValueChange={() => this.setState({ select: !this.state.select })}
+                onValueChange={() => {this.setState({ select: !this.state.select })
+                this.setState({ address: ""  })}}
                 color={this.state.select ? 'orange' : undefined}
                 style={{alignSelf:"center"}}
               />
-              <Text onPress={() => this.setState({ select: !this.state.select })} style={{ alignSelf:"center", paddingLeft:"10%", fontFamily: "My", fontSize: 20 }}>직접 입력</Text>
+              <Text onPress={() => {
+            this.setState({ address: ""  })
+            this.setState({ select: !this.state.select })
+            }
+            } style={{ alignSelf:"center", paddingLeft:"10%", fontFamily: "My", fontSize: 20 }}>직접 입력</Text>
               </View>
             </View>
             {this.state.select &&
@@ -361,6 +366,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     paddingTop: Platform.OS === `ios` ? 0 : 10 ,
+    position:"absolute"
   },
   header: {
     width: screenWidth,
@@ -443,6 +449,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: "90%",
     height: "62%",
+    position:"absolute",
 
     backgroundColor: "white",
     borderRadius: 15,

@@ -1,5 +1,5 @@
 import React, { Component, useCallback, useMemo } from "react";
-import { Alert, BackHandler, StyleSheet, Text, View, Dimensions, TouchableOpacity, ImageBackground, Image } from "react-native";
+import { StatusBar, SafeAreaView,Alert, BackHandler, StyleSheet, Text, View, Dimensions, TouchableOpacity, ImageBackground, Image } from "react-native";
 import { Button, NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { ActivityIndicator, IconButton } from 'react-native-paper';
