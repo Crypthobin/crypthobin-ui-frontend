@@ -24,8 +24,6 @@ export default class App extends Component {
       address: "",
       open_add: false,
       edit: false,
-      check: [],
-      false_data: [],
       open_del: false,
       open_menu: [],
       isLoading: true,
@@ -37,71 +35,43 @@ export default class App extends Component {
   }
 
   async fetchData () {
-    this.setState({ isLoading: true });
+    if (this.state.edit) return
 
     const res = await callBackend('GET', '/api/addresses')
-
-    var check_data = this.state.check;
-    var false_data = [];
-    for (var i = 0; i < this.state.addresses.length; i++) {
-      if (!check_data[i]) check_data[i] = false;
-      false_data[i] = false;
-    }
-
-    this.setState({
-      check: check_data,
-      false_data,
-      addresses: res.data,
-      isLoading: false
-    });
+    this.setState({ addresses: res.data });
   }
 
   checkDel = (i) => {
-    this.state.check[i] = !this.state.check[i];
-    this.state.addresses[i].isDel = this.state.check[i];
-    this.setState({ check: this.state.check, addresses: this.state.addresses });
+    this.state.addresses[i].isDel = !this.state.addresses[i].isDel
+    this.setState({ addresses: this.state.addresses });
   }
 
   async onDel() {
-    for (var i = 0; i < this.state.addresses.length; i++) {
-
-      // -- backend
-      if (this.state.check[i])  {
-        const delRes = await callBackend('DELETE', `/api/addresses/${this.state.addresses[i].id}`)
-        if (!delRes.success) {
-          alert(`알 수 없는 오류 발생: ${delRes.message}`)
-          return
-        }
+    for (const address of this.state.addresses.filter(address => address.isDel)) {
+      const delRes = await callBackend('DELETE', `/api/addresses/${address.id}`)
+      if (!delRes.success) {
+        alert(`알 수 없는 오류 발생: ${delRes.message}`)
+        return
       }
-
-      this.fetchData();
-      // -- backend fin.
-
-      this.state.check[i] = false;
     }
-    this.setState({ check: this.state.check })
-    this.setState({ open_del: false })
-    this.setState({ edit: false })
+    
+    this.fetchData();
+    this.setState({ open_del: false, edit: false })
   }
 
   async onAdd() {
-
-    const friend = {
-      name: this.state.name,
-      address: this.state.address,
-    };
-    if (!friend.name || !friend.address) {
+    if (!this.state.name || !this.state.address) {
       alert("모두 입력해주세요");
       return;
     }
-    if (friend.address.length != 43) {
+    if (this.state.address.length != 43) {
       alert("주소를 다시 한 번 확인해주세요.");
       return;
     }
 
     const addRes = await callBackend('POST', '/api/addresses', {
-      explanation: friend.name,
-      address: friend.address
+      explanation: this.state.name,
+      address: this.state.address
     })
 
     if (!addRes.success) {
@@ -114,18 +84,14 @@ export default class App extends Component {
   }
 
   onReset() {
-    for (var i = 0; i < this.state.addresses.length; i++) {
-      this.state.check[i] = false;
-      this.state.addresses[i].isDel = false;
-    }
-    this.setState({ edit: false, check: this.state.check, addresses: this.state.addresses });
+    this.setState({ edit: false });
+    this.fetchData()
   }
 
   onSingleDel(i) {
-    this.state.check[i] = !this.state.check[i];
-    this.state.addresses[i].isDel = this.state.check[i];
+    this.state.addresses = this.state.addresses.map((v) => ({ ...v, isDel: false }));
+    this.state.addresses[i].isDel = true;
     this.setState({
-      check: this.state.check, 
       addresses: this.state.addresses,
       open_menu: this.state.open_menu.fill(false),
       open_del: true
@@ -182,22 +148,13 @@ export default class App extends Component {
             <IconButton size={30}
               style={{ marginTop: "3%" }}
               icon={() => {
-                var count = 0;
                 if (!this.state.edit) {
-                  return (
-                    <MaterialIcons name="person-add-alt" size={30} color="black" />
-                  );
+                  return <MaterialIcons name="person-add-alt" size={30} color="black" />;
                 } else {
-
-                  for (i = 0; i < this.state.addresses.length; i++) {
-                    if (this.state.check[i]) {
-                      count += 1;
-                    }
-                  }
                   return (
                     <View style={{ flexDirection: "row" }}>
                       <Ionicons name="trash-bin" size={25} color="orange" />
-                      <Text style={{ marginTop: "30%", color: "orange", fontFamily: "Mybold", fontSize: 15 }}>({count})</Text>
+                      <Text style={{ marginTop: "30%", color: "orange", fontFamily: "Mybold", fontSize: 15 }}>({this.state.addresses.filter((v) => v.isDel).length})</Text>
                     </View>
                   );
                 }
@@ -206,7 +163,7 @@ export default class App extends Component {
                 if (!this.state.edit) {
                   this.setState({ open_add: true })
                 } else {
-                  if (this.state.check.slice(0, this.state.address.length).find((v) => v)) {
+                  if (this.state.addresses.filter((v) => v.isDel).length) {
                     this.setState({ open_del: true });
                   } else {
                     alert("삭제할 주소를 선택해주세요.");
@@ -217,98 +174,81 @@ export default class App extends Component {
           </View>
           <ScrollView>
             <View style={styles.container3}>
-              {this.state.addresses.map((card, i) => {
-                if (this.state.edit) {
-                  return (
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", paddingLeft: "5%" }}>
-                      <View style={styles.shortCardContainer} key={i}>
-                        <View style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          padding: "2%",
-                        }}>
-                          <View
-                            style={{
-                              flexDirection: "column",
-                              justifyContent: "space-between",
-                              padding: "2%",
-                            }}
-                          >
-                            <View style={styles.name}>
-                              <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.explanation}</Text>
-                            </View>
-                            <View style={styles.address}>
-                              <Text style={{ fontSize: 15, fontFamily: "My", }}>
-                                {card.walletAddress}
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                      <IconButton size={45}
-                        style={{ marginTop: "2%" }}
-                        icon={() => {
-                          if (this.state.check[i]) {
-                            return (
-                              //<FontAwesome name="check-circle" size={30} color="orange" />
-                              <FontAwesome name="check-square" size={25} color="orange" />
-                            );
-                          }
-                          else return (
-                            //<FontAwesome name="circle-o" size={30} color="black" />
-                            <FontAwesome name="square-o" size={25} color="black" />
-                          );
-                        }}
-                        onPress={
-                          () => this.checkDel(i)
-                        }
-                      />
-                    </View>
-                  );
-                } else {
-                  return (
-                    <View style={styles.cardContainer} key={i}>
-                      <View style={{
-                        flexDirection: "row",
+              {this.state.edit && this.state.addresses.map((card, i) => 
+                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingLeft: "5%" }}>
+                <View style={styles.shortCardContainer} key={i}>
+                  <View style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    padding: "2%",
+                  }}>
+                    <View
+                      style={{
+                        flexDirection: "column",
                         justifyContent: "space-between",
                         padding: "2%",
-                      }}>
-                        <Ionicons name="ios-person-circle" size={60} color="orange" />
-                        <View
-                          style={{
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            padding: "2%",
-                          }}
-                        >
-                          <View style={styles.name}>
-                            <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.explanation}</Text>
-                          </View>
-                          <View style={styles.address}>
-                            <Text style={{ fontSize: 15, fontFamily: "My", }}>
-                              {card.walletAddress}
-                            </Text>
-                          </View>
-                        </View>
-                        <View>
-                          <Menu
-                            visible={this.state.open_menu[i]}
-                            anchor={
-                              <IconButton
-                                icon={() => <FontAwesome name="ellipsis-v" size={30} color="black" />}
-                                onPress={() => {
-                                  this.state.open_menu[i] = true
-                                  this.setState({ open_menu: this.state.open_menu })
-                                }}/>}>
-                            <MenuItem onPress={() => this.onSingleDel(i)}>삭제</MenuItem>
-                            <MenuItem onPress={() => this.setState({ open_menu: this.state.open_menu.fill(false)})}>취소</MenuItem>
-                          </Menu>
-                        </View>
+                      }}
+                    >
+                      <View style={styles.name}>
+                        <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.explanation}</Text>
+                      </View>
+                      <View style={styles.address}>
+                        <Text style={{ fontSize: 15, fontFamily: "My", }}>
+                          {card.walletAddress}
+                        </Text>
                       </View>
                     </View>
-                  );
-                }
-              })}
+                  </View>
+                </View>
+                <IconButton size={45}
+                  style={{ marginTop: "2%" }}
+                  onPress={() => this.checkDel(i)}
+                  icon={() =>
+                    card.isDel
+                      ? <FontAwesome name="check-square" size={25} color="orange" />
+                      : <FontAwesome name="square-o" size={25} color="black" />}/>
+                </View>)}
+
+              {!this.state.edit && this.state.addresses.map((card, i) => 
+                <View style={styles.cardContainer} key={i}>
+                <View style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  padding: "2%",
+                }}>
+                  <Ionicons name="ios-person-circle" size={60} color="orange" />
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      padding: "2%",
+                    }}
+                  >
+                    <View style={styles.name}>
+                      <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.explanation}</Text>
+                    </View>
+                    <View style={styles.address}>
+                      <Text style={{ fontSize: 15, fontFamily: "My", }}>
+                        {card.walletAddress}
+                      </Text>
+                    </View>
+                  </View>
+                  <View>
+                    <Menu
+                      visible={this.state.open_menu[i]}
+                      anchor={
+                        <IconButton
+                          icon={() => <FontAwesome name="ellipsis-v" size={30} color="black" />}
+                          onPress={() => {
+                            this.state.open_menu[i] = true
+                            this.setState({ open_menu: this.state.open_menu })
+                          }}/>}>
+                      <MenuItem onPress={() => this.onSingleDel(i)}>삭제</MenuItem>
+                      <MenuItem onPress={() => this.setState({ open_menu: this.state.open_menu.fill(false)})}>취소</MenuItem>
+                    </Menu>
+                  </View>
+                </View>
+              </View>)}
             </View>
           </ScrollView>
           <Modal
@@ -352,28 +292,20 @@ export default class App extends Component {
             offset={this.state.offset}
             open={this.state.open_del}
             modalDidOpen={() => console.log('modal did open')}
-            modalDidClose={() => this.setState({ open_del: false })}
+            modalDidClose={() => this.setState({ open_del: false }) || this.fetchData()}
             modalStyle={styles.modal2}
           >
             <MaterialCommunityIcons name="account-multiple-remove" size={60} color="orange" />
             <Text style={{ fontSize: 23, fontFamily: "Mybold", paddingTop: "10%", paddingBottom: "10%" }}>아래 주소를 삭제하시겠습니까?</Text>
             <View style={{ width: "80%", height: "30%", backgroundColor: "#FFE5CC", padding: "3%", borderRadius: 10 }}>
               <ScrollView>
-                {this.state.addresses.map((card, i) => {
-                  if (this.state.check[i]) {
-                    return (
-                      <Text style={{ fontFamily: "My", fontSize: 20, marginBottom: "3%", marginLeft: "5%" }}>{card.explanation}</Text>
-                    );
-                  }
-                })}
+                {this.state.addresses.filter((v) => v.isDel).map((card) =>
+                  <Text style={{ fontFamily: "My", fontSize: 20, marginBottom: "3%", marginLeft: "5%" }}>{card.explanation}</Text>)}
               </ScrollView>
             </View>
             <TouchableOpacity
               style={styles.small_btn}
-              onPress={() => {
-                this.onDel();
-
-              }}>
+              onPress={this.onDel.bind(this)}>
               <Text style={styles.small_text}>삭제</Text>
             </TouchableOpacity>
           </Modal>

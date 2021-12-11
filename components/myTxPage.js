@@ -22,12 +22,6 @@ const myTxPage = ({ walletId }) => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const handlePageChange = (page) => {
-    if (0 < page && page <= pages) {
-      setTxs({ ...txs, currentPage: page });
-    }
-  }
-
   const { data, pageSize, currentPage } = txs;
   const pagedTxs = paginate(data, currentPage, pageSize);
   const length = txs.data.length;
@@ -35,6 +29,12 @@ const myTxPage = ({ walletId }) => {
   const pages = pageCount;
   const [addresses, setAddresses] = useState([])
 
+  const handlePageChange = (page) => {
+    if (0 < page && page <= pages) {
+      console.log(pages)
+      setTxs({ ...txs, currentPage: page });
+    }
+  }
 
   async function fetchData() {
     setIsLoading(true);
@@ -130,7 +130,7 @@ const myTxPage = ({ walletId }) => {
                       </View>
                     </View>
                     <View style={styles.address}>
-                      <Text style={{ fontSize: 20, fontFamily: "My", }}>{addresses?.find((v) => v.otherAddresses.includes(card.address))?.explanation || '(등록되지 않은 월렛)'}</Text>
+                      <Text style={{ fontSize: 20, fontFamily: "My", }}>{addresses?.find((v) => v.walletAddress === card.address || v.otherAddresses.includes(card.address))?.explanation || '(등록되지 않은 월렛)'}</Text>
                       <Text style={{ fontSize: 20, fontFamily: "My", color: "orange" }}>{card.address.substring(0, 10)}...{card.address.substring(38)}</Text>
                     </View>
                     <View style={styles.amount}>
