@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
-import { ActivityIndicator, IconButton } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import { ScrollView } from "react-native-gesture-handler";
 
 import { callBackend } from "../utils/backend";

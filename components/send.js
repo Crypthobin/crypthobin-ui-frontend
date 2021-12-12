@@ -103,7 +103,7 @@ export default class App extends Component {
     const send = {
       address: this.state.address,
       amount: this.state.amount,
-      balance: this.state.balance - this.state.amount,
+      balance: this.state.balance
     };
     if (!send.address || !send.amount) {
       Alert.alert("","주소와 금액을 정확히 입력해 주세요.",[{text:"확인"}]);

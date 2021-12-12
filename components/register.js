@@ -79,10 +79,8 @@ export default class App extends Component {
       await AsyncStorageLib.setItem('reg_id', this.state.id);
       await AsyncStorageLib.setItem('reg_pw', this.state.password);
       await AsyncStorageLib.setItem('reg_pwc', this.state.password_confirm);
-
       this.props.navigation.navigate("Create_wallet");
-     
-}
+    }
   }
 
   render() {

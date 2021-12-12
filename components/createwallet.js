@@ -44,7 +44,6 @@ export default class App extends Component {
 
     await AsyncStorageLib.setItem('token', registRes.data.token)
 
-
     const createWalletRes =  await callBackend('POST', '/api/wallets', {
       alias: user.wallet_name
     })

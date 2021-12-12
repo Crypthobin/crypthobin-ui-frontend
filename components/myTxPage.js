@@ -5,7 +5,7 @@ import { NativeBaseProvider } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from '@expo/vector-icons';
-import { ActivityIndicator, IconButton } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 
 //import txData from '../data/txDataEmpty'; 
 import { callBackend } from '../utils/backend';
@@ -23,7 +23,6 @@ const myTxPage = ({ walletId }) => {
   });
 
   const [isLoading, setIsLoading] = useState(true);
-
 
   const { data, pageSize, currentPage } = txs;
   const pagedTxs = paginate(data, currentPage, pageSize);
