@@ -4,7 +4,7 @@ import { NativeBaseProvider, Button } from "native-base";
 import * as Font from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Wallet_main from "./wallet_main";
-import { LogBox } from 'react-native';
+import { LogBox, TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 import { callBackend } from "../utils/backend";
 import { ActivityIndicator } from "react-native-paper";
@@ -74,6 +74,7 @@ export default class App extends Component {
     if (this.state.fontsLoaded) {
       return (
         <NativeBaseProvider>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View
             style={{ width:"100%", height:"100%", backgroundColor:"white"
             }}
@@ -118,6 +119,7 @@ export default class App extends Component {
             </Text>
           </View>
           </View>
+          </TouchableWithoutFeedback>
         </NativeBaseProvider>
       );
     } else {

@@ -5,6 +5,7 @@ import Bottom_navigation from "./bottom_navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { LogBox } from 'react-native';
+import { View } from 'native-base';
 
 const temp = createStackNavigator(
     {

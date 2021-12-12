@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, Dimensions, TextInput, Alert } from "react-nati
 import { Button, NativeBaseProvider } from "native-base";
 import { callBackend } from "../utils/backend";
 import AsyncStorageLib from "@react-native-async-storage/async-storage";
-import { LogBox } from 'react-native';
+import { LogBox, TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -87,6 +87,7 @@ export default class App extends Component {
     LogBox.ignoreAllLogs();
     return (
       <NativeBaseProvider>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View
             style={{ width:"100%", height:"100%", backgroundColor:"white"
             }}
@@ -177,6 +178,7 @@ export default class App extends Component {
           </Button>
         </View>
         </View>
+        </TouchableWithoutFeedback>
       </NativeBaseProvider>
     );
   }
