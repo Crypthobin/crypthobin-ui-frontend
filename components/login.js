@@ -74,6 +74,10 @@ export default class App extends Component {
     if (this.state.fontsLoaded) {
       return (
         <NativeBaseProvider>
+          <View
+            style={{ width:"100%", height:"100%", backgroundColor:"white"
+            }}
+            >
           <View style={styles.container}>
             <View>
               <Text style={styles.title}>밥 그 릇</Text>
@@ -112,6 +116,7 @@ export default class App extends Component {
                 밥은 먹고 다니냐?
               </Text>
             </Text>
+          </View>
           </View>
         </NativeBaseProvider>
       );

@@ -175,6 +175,10 @@ export default class App extends Component {
 
     return (
       <NativeBaseProvider>
+        <View
+            style={{ width:"100%", height:"100%", backgroundColor:"white"
+            }}
+            >
         <View style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.logoText}
@@ -367,6 +371,7 @@ export default class App extends Component {
 
           </View>
         </Modal>
+        </View>
       </NativeBaseProvider>
     );
   }

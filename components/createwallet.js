@@ -63,6 +63,10 @@ export default class App extends Component {
     LogBox.ignoreAllLogs();
     return (
       <NativeBaseProvider>
+        <View
+            style={{ width:"100%", height:"100%", backgroundColor:"white"
+            }}
+            >
         <View style={styles.container}>
           <View
             style={{
@@ -113,6 +117,7 @@ export default class App extends Component {
             />
 
 
+        </View>
         </View>
       </NativeBaseProvider>
     );
