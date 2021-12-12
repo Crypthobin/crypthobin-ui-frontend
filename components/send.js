@@ -10,7 +10,7 @@ import Checkbox from 'expo-checkbox';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { callBackend } from "../utils/backend";
 import { justifyContent, right, width } from "styled-system";
-import { LogBox } from 'react-native';
+import { LogBox, TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -175,6 +175,7 @@ export default class App extends Component {
 
     return (
       <NativeBaseProvider>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View
             style={{ width:"100%", height:"100%", backgroundColor:"white"
             }}
@@ -390,6 +391,7 @@ export default class App extends Component {
           </View>
         </Modal>
         </View>
+        </TouchableWithoutFeedback>
       </NativeBaseProvider>
     );
   }
@@ -399,7 +401,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: screenWidth,
-    height: screenHeight - 60,
+    height: screenHeight -60,
     alignItems: "center",
     backgroundColor: "white",
     paddingTop: Platform.OS === `ios` ? 0 : 12 ,
