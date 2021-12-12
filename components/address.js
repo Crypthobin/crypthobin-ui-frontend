@@ -107,6 +107,7 @@ export default class App extends Component {
   }
 
   onReset() {
+    this.setState({ addresses: this.state.addresses.map((v) => ({ ...v, isDel: false })) });
     this.setState({ edit: false });
     this.fetchData()
   }
@@ -290,18 +291,7 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
                         </Text>
                       </View>
                     </View>
-                    <Menu
-                      visible={this.state.open_menu[i]}
-                      anchor={
-                        <IconButton
-                          icon={() => <FontAwesome name="ellipsis-v" size={30} color="black" />}
-                          onPress={() => {
-                            this.state.open_menu[i] = true
-                            this.setState({ open_menu: this.state.open_menu })
-                          }}/>}>
-                      <MenuItem onPress={() => this.onSingleDel(i)}>삭제</MenuItem>
-                      <MenuItem onPress={() => this.setState({ open_menu: this.state.open_menu.fill(false)})}>취소</MenuItem>
-                    </Menu>
+                    
                   </View>
                 </View>
               </View>)}
