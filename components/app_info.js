@@ -10,7 +10,7 @@ const App_info = () => {
   let appInfo = [
     {
       app_info: "'밥 그릇' 앱은 양자 내성을 가진 암호화폐를 기반으로 한 지갑입니다. 사용자가 보다 안전하게 코인을 관리하고 거래할 수 있도록  서비스를 제공합니다.",
-      team: "BoB 10기 보안제품개발트랙 team.Cypthobin",
+      team: "BoB 10기 보안제품개발트랙 team.Crypthobin",
       member: "장호빈, 신은규, 이승아, 유재겸, 박민혁"
     }
   ]

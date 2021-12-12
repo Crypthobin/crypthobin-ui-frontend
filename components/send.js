@@ -316,7 +316,22 @@ export default class App extends Component {
           open={this.state.open}
           modalDidOpen={() => console.log('modal did open')}
           modalDidClose={() => this.setState({ open: false })}
-          modalStyle={styles.modal}
+          //modalStyle={styles.modal}
+          position={"bottom"}
+            modalStyle={
+          { 
+              alignSelf: "center",
+              alignItems: 'center',
+              width: "90%",
+              height: 420,
+              padding: "5%",
+              backgroundColor: "white",
+              borderRadius: 15,
+              position: 'absolute',
+              bottom: 0,
+              top: 120,  
+          }
+          }
         >
           
           <View style={{ 
@@ -487,7 +502,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: "center",
     alignSelf: "center",
-    width: "80%",
+    width: "90%",
     fontFamily: "Mybold",
     color: "black",
     padding: "3%",
