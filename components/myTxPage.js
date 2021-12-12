@@ -168,11 +168,11 @@ const myTxPage = ({ walletId }) => {
                     </View>
                     <View style={{flexDirection:"row", paddingTop:"2%" }}>
                       <View style={styles.confirm}>
-                      { card.confirmations < 1 && <Text style={{ fontSize: 20, fontFamily: "My", alignSelf: "flex-start", }}>확정되지 않은 거래</Text>}
+                      { card.confirmations < 1 && <Text style={{ fontSize: 18, fontFamily: "My", alignSelf: "flex-start", }}>확정되지 않은 거래</Text>}
                       { card.confirmations > 0 && <Text style={{ fontSize: 20, fontFamily: "My", alignSelf: "flex-start", }}>확정된 거래</Text>                }
                       </View>
                     <View style={styles.amount}>
-                      <Text style={{ fontSize: 25, fontFamily: "My", alignSelf: "flex-end", }}>{Math.abs(card.amount)} TOL</Text>
+                      <Text style={{ fontSize: 22, fontFamily: "My", alignSelf: "flex-end", }}>{Math.abs(card.amount)} TOL</Text>
                     </View>
                     </View>
                     </View>

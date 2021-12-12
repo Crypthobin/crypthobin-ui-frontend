@@ -245,7 +245,7 @@ export default class App extends Component {
                 style={{
                   ...pickerSelectStyles,
                   iconContainer: {
-                    top:"15%",
+                    top:"20%",
                     right:"2%",
                   },
                 }}
@@ -253,7 +253,7 @@ export default class App extends Component {
                 useNativeAndroidPickerStyle={false}
                 textInputProps={{ underlineColor: 'yellow' }}
                 Icon={() => {
-                  return <Ionicons name="md-arrow-down" size={24} color="black" />;
+                  return <Ionicons name="md-arrow-down" size={22} color="gray" />;
                 }}
               />}
             <View style={{ paddingBottom: "3%", paddingTop: "5%" }}>
@@ -281,14 +281,17 @@ export default class App extends Component {
             marginTop: "5%",
             paddingTop: "3%",
             paddingBottom: "5%",
+            width:"100%",
             }}
             >
             <Text style={(this.state.balance - this.state.amount < 0) ? {
-              color: "red", fontSize: 22,
+              color: "red", fontSize: 20,
               fontFamily: "Mybold",
+              alignSelf:"flex-end"
             } : {
-              color: "orange", fontSize: 22,
+              color: "orange", fontSize: 20,
               fontFamily: "Mybold",
+              alignSelf:"flex-end"
             }
             }>(송금 후 잔액: {this.state.isLoading ? <ActivityIndicator color="orange"
             size={15}
