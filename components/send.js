@@ -55,7 +55,7 @@ export default class App extends Component {
     const send = {
       address: this.state.address,
       amount: this.state.amount,
-      balance: this.state.balance - this.state.amount,
+      balance: this.state.balance
     };
     if (!send.address || !send.amount) {
       alert("모두 입력해주세요.");
@@ -205,7 +205,7 @@ export default class App extends Component {
               paddingHorizontal: "10%",
               fontFamily: "Mybold",
             }
-            }>(송금 후 잔액: {this.state.balance-this.state.amount || <ActivityIndicator />} TOL)</Text>
+            }>(송금 후 잔액: {this.state.balance-this.state.amount ?? <ActivityIndicator />} TOL)</Text>
           </View>
           <View style={styles.buttonArea}>
             <IconButton size={50}
