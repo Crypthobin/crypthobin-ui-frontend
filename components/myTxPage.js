@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from '@expo/vector-icons';
 import { IconButton } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native';
 
 //import txData from '../data/txDataEmpty'; 
 import { callBackend } from '../utils/backend';
@@ -146,12 +147,12 @@ const myTxPage = ({ walletId }) => {
                           <MaterialIcons name="call-made" size={30} color="#BDBDBD" />
                         </View>
                       }
-                      {(card.category == "receive" && card.confirmations == "1") &&
+                      {(card.category == "receive" && card.confirmations > 0) &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-received" size={30} color="orange" />
                         </View>
                       }
-                      {(card.category == "receive" && card.confirmations == "0") &&
+                      {(card.category == "receive" && card.confirmations < 1) &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-received" size={30} color="#BDBDBD" />
                         </View>
@@ -167,12 +168,8 @@ const myTxPage = ({ walletId }) => {
                     </View>
                     <View style={{flexDirection:"row", paddingTop:"2%" }}>
                       <View style={styles.confirm}>
-    { card.confirmations == "0" &&
-                      <Text style={{ fontSize: 20, fontFamily: "My", alignSelf: "flex-start", }}>확정되지 않은 거래</Text>                
-    }
-    { card.confirmations == "1" &&
-                      <Text style={{ fontSize: 28, fontFamily: "My", alignSelf: "flex-start", }}>확정된 거래</Text>                
-    }
+                      { card.confirmations < 1 && <Text style={{ fontSize: 20, fontFamily: "My", alignSelf: "flex-start", }}>확정되지 않은 거래</Text>}
+                      { card.confirmations > 0 && <Text style={{ fontSize: 20, fontFamily: "My", alignSelf: "flex-start", }}>확정된 거래</Text>                }
                       </View>
                     <View style={styles.amount}>
                       <Text style={{ fontSize: 25, fontFamily: "My", alignSelf: "flex-end", }}>{Math.abs(card.amount)} TOL</Text>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { KeyboardAvoidingView, Keyboard, StyleSheet, Text, View, Dimensions, TouchableOpacity, TextInput, Alert } from "react-native";
+import { KeyboardAvoidingView, Keyboard, StyleSheet, Text, View, Dimensions, TouchableOpacity, TextInput, Alert, ActivityIndicator } from "react-native";
 import { Button, NativeBaseProvider } from 'native-base';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
@@ -86,7 +86,7 @@ export default class App extends Component {
       return;
     }
     
-    if (this.state.address.length != 43  !(/pqc/).test(this.state.address)) {
+    if (this.state.address.length != 43 || !(/pqc/).test(this.state.address)) {
       Alert.alert("주소 오류","bobtol 주소가 맞는지 확인해 주세요.",[{text:"확인"}]);
       return;
     }
@@ -274,22 +274,22 @@ style={{width:"33%", flexDirection: "row", justifyContent:"flex-end", marginRigh
                   </View>
                   <View
                     style={{
-                      flexDirection: "column",
+                      flexDirection: "row",
                       justifyContent: "space-between",
                       padding: "2%", 
                       width:"80%"
                     }}
                   >
-                    <View style={styles.name}>
-                      <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.explanation}</Text>
+                    <View>
+                      <View style={styles.name}>
+                        <Text style={{ fontSize: 25, fontFamily: "Mybold", }}>{card.explanation}</Text>
+                      </View>
+                      <View style={styles.address}>
+                        <Text style={{ fontSize: 15, fontFamily: "My", }}>
+                          {card.walletAddress}
+                        </Text>
+                      </View>
                     </View>
-                    <View style={styles.address}>
-                      <Text style={{ fontSize: 15, fontFamily: "My", }}>
-                        {card.walletAddress}
-                      </Text>
-                    </View>
-                  </View>
-                  <View>
                     <Menu
                       visible={this.state.open_menu[i]}
                       anchor={
