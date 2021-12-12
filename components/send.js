@@ -60,6 +60,20 @@ function calc(arr){
    
  }
 
+ function search1(str) {
+  var count = 0;
+  var searchChar = '-'; 
+  var pos = str.indexOf(searchChar);
+
+  while (pos !== -1) {
+    count++;
+    pos = str.indexOf(searchChar, pos + 1);
+  }
+
+  return count;
+   
+ }
+
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -250,7 +264,7 @@ export default class App extends Component {
               returnKeyType="done"
               keyboardType="number-pad"
               onChangeText={amount => {
-                if (amount == "" || search(amount) > 1 ) { // 혹은 .이 여러번 들어가면
+                if (amount == "" || search(amount) > 1 || search1(amount) > 0  ) { // 혹은 .이 여러번 들어가면
                   this.setState({ amount: 0 });
                 } else {
                   this.setState({ amount });
