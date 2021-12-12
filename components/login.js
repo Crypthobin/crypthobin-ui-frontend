@@ -1,11 +1,16 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Dimensions, TextInput } from "react-native";
+import { Text, View, StyleSheet, Dimensions, TextInput, Alert } from "react-native";
 import { NativeBaseProvider, Button } from "native-base";
 import * as Font from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import Wallet_main from "./wallet_main";
+import { LogBox } from 'react-native';
 
 import { callBackend } from "../utils/backend";
 import { ActivityIndicator } from "react-native-paper";
+
+import {CommonActions} from '@react-navigation/native';
+import { NavigationActions } from 'react-navigation';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -47,18 +52,25 @@ export default class App extends Component {
 
     if (loginRes.success) {
       await AsyncStorage.setItem('token', loginRes.data.token);
-      this.props.navigation.navigate("After");
+
       this.setState({ isLoading: false });
+      this.setState({ id: "" });
+      this.setState({ password: "" });
+      this.props.navigation.navigate("After");
+      
     }
 
     if (!loginRes.success) {
-      alert('올바른 아이디 혹은 비밀번호를 입력해주세요.');
+      Alert.alert("","올바른 아이디 혹은 비밀번호를 입력해 주세요.",[{text:"확인"}]);
+      this.setState({ id: "" });
+      this.setState({ password: "" });
       this.setState({ isLoading: false });
       return
     }
   };
 
   render() {
+    LogBox.ignoreAllLogs();
     if (this.state.fontsLoaded) {
       return (
         <NativeBaseProvider>
@@ -69,16 +81,18 @@ export default class App extends Component {
             <View style={styles.formArea}>
               <TextInput
                 style={styles.textForm}
+                value={this.state.id}
                 onChangeText={(id) => this.setState({ id })}
                 placeholder={"아이디"} />
               <TextInput
                 style={styles.textForm}
+                value={this.state.password}
                 secureTextEntry={true}
                 onChangeText={(password) => this.setState({ password })}
                 placeholder={"비밀번호"} />
             </View>
             <View style={styles.buttonArea}>
-              {this.state.isLoading && <ActivityIndicator color="black" />}
+              {this.state.isLoading && <ActivityIndicator color="orange" />}
               {!this.state.isLoading &&
                 <Button block style={styles.loginButton}
                   onPress={this.onLogin}>
@@ -89,7 +103,9 @@ export default class App extends Component {
               style={styles.registerText}
               onPress={() => {
                 this.props.navigation.navigate("Register");
-                //this.props.gotoPage('Register');
+                this.setState({ id: "" });
+      this.setState({ password: "" });
+      this.setState({ isLoading: false });
               }}
             >
               <Text style={{ color: "black", textDecorationLine: "underline" }}>
@@ -108,8 +124,11 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     width: screenWidth,
+    //height: "100%",
     height: screenHeight,
     backgroundColor: "white",
+    flex: 1,
+    position: 'absolute',
   },
   title: {
     fontSize: 40,

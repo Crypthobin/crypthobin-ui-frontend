@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Dimensions, TextInput } from "react-native";
+import { Text, View, StyleSheet, Dimensions, TextInput, Alert } from "react-native";
 import { Button, NativeBaseProvider } from "native-base";
 import { callBackend } from "../utils/backend";
 import AsyncStorageLib from "@react-native-async-storage/async-storage";
+import { LogBox } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -28,21 +29,21 @@ export default class App extends Component {
 
   async idCheck() {
     if (!this.state.id) {
-      alert("아이디를 입력해주세요");
+      Alert.alert("","아이디를 입력해 주세요.",[{text:"확인"}]);
       return;
     }
     if (white_space.test(this.state.id)) {
-      alert("공백은 포함할 수 없습니다.");
+      Alert.alert("","공백은 포함할 수 없습니다.",[{text:"확인"}]);
       return;
     }
     if (kor.test(this.state.id) || sym.test(this.state.id) || this.state.id.length < 5) {
-      alert("아이디는 5자 이상의 영문, 숫자만 사용할 수 있습니다.");
+      Alert.alert("","아이디는 5자 이상의 영문, 숫자만 사용할 수 있습니다.",[{text:"확인"}]);
       return;
     }
 
     const res = await callBackend('GET', `/auth/claimed?id=${this.state.id}`)
-    if (res.claimed) alert('중복된 아이디입니다, 다른 아이디를 입력해주세요.')
-    else alert('사용 가능한 아이디입니다.')
+    if (res.claimed) Alert.alert("중복된 아이디","다른 아이디를 입력해 주세요.",[{text:"확인"}]);
+    else Alert.alert("","사용 가능한 아이디입니다.",[{text:"확인"}]);
   }
 
   async handleSubmit() {
@@ -52,27 +53,28 @@ export default class App extends Component {
       password_confirm: this.state.password_confirm,
     };
     if (!user.id || !user.password || !user.password_confirm) {
-      alert("모두 입력해주세요");
+      Alert.alert("","모두 입력해 주세요.",[{text:"확인"}]);
       return;
     }
     else if (user.password_confirm != user.password) {
-      alert("비밀번호가 일치하지 않습니다.");
+      Alert.alert("","비밀번호가 일치하지 않습니다.",[{text:"확인"}]);
       return;
     }
     if (white_space.test(user.id) || white_space.test(user.password)) {
-      alert("공백은 포함할 수 없습니다.");
+      Alert.alert("","공백은 포함할 수 없습니다.",[{text:"확인"}]);
       return;
     }
     if (kor.test(this.state.id) || sym.test(this.state.id) || this.state.id.length < 5) {
-      alert("아이디는 5자 이상의 영문, 숫자만 사용할 수 있습니다.");
+      Alert.alert("","아이디는 5자 이상의 영문, 숫자만 사용할 수 있습니다.",[{text:"확인"}]);
       return;
     }
     if (!num.test(this.state.password) || !eng.test(this.state.password) || !sym.test(this.state.password) || kor.test(this.state.password) || this.state.password.length < 10) {
-      alert("비밀번호는 영문, 숫자, 특수문자 혼합 10자 이상이어야 합니다.");
+      Alert.alert("","비밀번호는 영문, 숫자, 특수문자 혼합 10자 이상이어야 합니다.",[{text:"확인"}]);
       return;
     }
+
     const res = await callBackend('GET', `/auth/claimed?id=${this.state.id}`)
-    if (res.claimed) alert('중복된 아이디입니다, 다른 아이디를 입력해주세요.')
+    if (res.claimed) Alert.alert("중복된 아이디","다른 아이디를 입력해 주세요.",[{text:"확인"}]);
     else {
       await AsyncStorageLib.setItem('reg_id', this.state.id);
       await AsyncStorageLib.setItem('reg_pw', this.state.password);
@@ -82,6 +84,7 @@ export default class App extends Component {
   }
 
   render() {
+    LogBox.ignoreAllLogs();
     return (
       <NativeBaseProvider>
         <View style={styles.container}>
@@ -94,7 +97,7 @@ export default class App extends Component {
           </View>
           <Text style={styles.title2}>계정 정보를 입력하세요.</Text>
           <View style={styles.formArea}>
-            <View style={{ flexDirection: "row", marginHorizontal: "10%", justifyContent: "space-between", width: "80%", marginBottom: "3%", }}>
+            <View style={{ flexDirection: "row", marginHorizontal: "10%", justifyContent: "space-between", width: "80%", height:"40%", marginBottom:"3%"}}>
               <TextInput
                 style={styles.textForm2}
                 value={this.state.id}
@@ -105,7 +108,7 @@ export default class App extends Component {
                   this.setState({ id });
                 }}
               />
-              <Button style={{ width: "30%", backgroundColor: "orange", fontFamily: "My" }}
+              <Button style={{ width: "30%", backgroundColor: "orange", fontFamily: "My", height:"100%", alignSelf:"center" }}
                 onPress={this.idCheck.bind(this)}>
                 <Text style={{ fontFamily: "Mybold", color: "white", fontSize: 18 }} >중복확인</Text>
               </Button>
@@ -176,10 +179,12 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: screenWidth,
     height: screenHeight,
     backgroundColor: "white",
     alignSelf: "center",
+    position: 'absolute',
   },
   title: {
     fontSize: 25,
@@ -199,7 +204,7 @@ const styles = StyleSheet.create({
   },
   formArea: {
     width: "80%",
-    height: "20%",
+    height: "20%",  
     marginTop: "20%",
     paddingBottom: '10%',
     alignSelf: "center",
@@ -224,7 +229,7 @@ const styles = StyleSheet.create({
     height: '100%',
     alignSelf: "center",
     fontFamily: "My",
-    fontSize: 18
+    fontSize: 18,
   },
   register_btn: {
     borderRadius: 5,

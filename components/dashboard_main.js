@@ -7,6 +7,8 @@ import { ScrollView } from "react-native-gesture-handler";
 
 import { callBackend } from "../utils/backend";
 import { displayedAt } from "../utils/convert";
+import { width } from "styled-system";
+import { LogBox } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -30,6 +32,8 @@ const Dashboard = ({ navigation }) => {
     if (res.success) setNetworkData(res.data)
     setIsLoading(false)
   }
+
+  LogBox.ignoreAllLogs();
   
   return (
     <NativeBaseProvider>
@@ -51,16 +55,25 @@ const Dashboard = ({ navigation }) => {
             }}
           />
         </View>
-        <Text style={styles.header2}>
-         대시보드</Text>
-        <View style={{ flexDirection: "row", width: "90%", height: "22%", justifyContent: "center" }}>
+        <View style={styles.header2}>
+          <Text style={styles.header22}>
+            대시보드 </Text>
+            {isLoading && <Text
+            style={{ alignSelf:"center"}}
+            > <ActivityIndicator  color="orange"
+            /></Text> }
+            </View>
+        <View style={{ flexDirection: "column", width: "90%", height: screenWidth/2, justifyContent: "space-between",
+       }}>
           <View style={styles.box}>
             <Text style={styles.header3}>
               현재 블록은</Text>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", paddingRight: "8%" }}>
+            <View style={{ width:"100%",  height:"60%",flexDirection: "row", justifyContent: "space-between", paddingRight: "2%"
+           }}>
               <FontAwesome name="cubes" size={40} color="white"
-                style={{ alignSelf: "flex-end", paddingBottom: "5%", paddingLeft: "8%" }} />
-              <View style={{ flexDirection: "row" }}>
+                style={{ width:"25%",alignSelf: "flex-end", paddingBottom: "3%", paddingLeft: "8%",
+                 }} />
+              <View style={{  width:"60%", flexDirection: "row", marginRight:"3%" }}>
                 <Text style={styles.num} > {networkData.blockCount}</Text>
                 <Text style={styles.header4}>개</Text>
               </View>
@@ -69,10 +82,11 @@ const Dashboard = ({ navigation }) => {
           <View style={styles.box}>
             <Text style={styles.header3}>
               현재 사용자는</Text>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", paddingRight: "8%" }}>
+              <View style={{ 
+                width:"100%",  height:"60%",flexDirection: "row", justifyContent: "space-between", paddingRight: "2%" }}>
               <FontAwesome5 name="people-carry" size={40} color="white"
-                style={{ alignSelf: "flex-end", paddingBottom: "7%", paddingLeft: "8%" }} />
-              <View style={{ flexDirection: "row" }}>
+                style={{ width:"25%", alignSelf: "flex-end", paddingBottom: "3%", paddingLeft: "8%" }} />
+              <View style={{ width:"60%", flexDirection: "row", marginRight:"3%" }}>
                 <Text style={styles.num} > {networkData.userCount}</Text>
                 <Text style={styles.header4}>명</Text>
               </View>
@@ -103,8 +117,9 @@ const Dashboard = ({ navigation }) => {
                           flexDirection: "row",
                           justifyContent: "space-between",
                           padding: "5%",
+                          alignSelf:"center",
                         }}>
-                        <View style={{ flexDirection: "column" }}>
+                        <View style={{ flexDirection: "column", alignSelf:"center", width:"100%" }}>
 
                           <View style={{ alignSelf: "flex-start" }}>
                             <Text style={{ fontSize: 17, fontFamily: "My", }}>채굴자</Text>
@@ -132,10 +147,12 @@ const Dashboard = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: screenWidth,
     height: screenHeight - 60,
     alignItems: "center",
     backgroundColor: "white",
+    paddingTop: Platform.OS === `ios` ? 0 : 10 ,
   },
   header: {
     width: screenWidth,
@@ -157,8 +174,7 @@ const styles = StyleSheet.create({
   },
   logoText: {
     textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 28,
+    fontSize: 35,
     color: "black",
     fontFamily: "Mybold",
     paddingLeft: "6%",
@@ -167,28 +183,32 @@ const styles = StyleSheet.create({
     paddingRight: "5%",
   },
   header2: {
-    fontSize: 35,
+    flexDirection:"row",
     alignSelf: "flex-start",
     paddingTop: "3%",
     paddingBottom: "3%",
     paddingHorizontal: "6%",
+  },
+  header22: {
     fontFamily: "Mybold",
+    fontSize: 35,
   },
   header3: {
     fontSize: 22,
     alignSelf: "flex-start",
-    paddingTop: "5%",
     paddingHorizontal: "6%",
-    paddingBottom: "12%",
     fontFamily: "My",
     color: "black",
+    height:"40%",
+    alignContent:"center",
+    paddingTop:"2%"
   },
   header33: {
     fontSize: 22,
     alignSelf: "flex-end",
     paddingHorizontal: "8%",
     fontFamily: "My",
-    paddingBottom: "2%",
+    paddingTop: "4%",
   },
   image: {
     width: "90%",
@@ -199,36 +219,40 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   box: {
-    width: "47%",
-    height: "80%",
+    width: "100%",
+    height: "48%",
     borderColor: "black",
     borderWidth: 2,
     borderRadius: 10,
-    margin: "2%",
     backgroundColor: "orange",
-    paddingBottom: "1%",
   },
   num: {
     fontSize: 50,
     alignSelf: "flex-end",
     fontFamily: "My",
     color: "black",
+    paddingBottom:"5%",
+    paddingRight:"2%",
+    textAlign:"right",
+    width:"90%",
   },
   header4: {
     fontSize: 22,
     alignSelf: "flex-end",
-    paddingTop: "5%",
-    paddingBottom: "7%",
+    marginBottom: "8%",
     fontFamily: "My",
+    marginRight:"2%",
     paddingLeft: "1%",
     color: "black",
+    width:"10%",
   },
   container3: {
     flex: 1,
     width: screenWidth,
-    height: "50%",
+    height: "60%",
     alignItems: "center",
     backgroundColor: "white",
+    paddingTop:"3%",
   },
   cardContainer: {
     alignContent: "center",

@@ -4,6 +4,7 @@ import Start_navigation from "./start_navigation";
 import Bottom_navigation from "./bottom_navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { NavigationContainer } from "@react-navigation/native";
+import { LogBox } from 'react-native';
 
 const temp = createStackNavigator(
     {
@@ -25,8 +26,11 @@ const temp = createStackNavigator(
 
     const Navi = createAppContainer(temp);
 
+    LogBox.ignoreAllLogs();
+
     return (
-        <NavigationContainer>
+        <NavigationContainer
+        >
           <Navi />
       </NavigationContainer>
       );

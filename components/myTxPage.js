@@ -11,6 +11,8 @@ import { IconButton } from 'react-native-paper';
 import { callBackend } from '../utils/backend';
 import moment from 'moment';
 
+import { LogBox } from 'react-native';
+
 const screenWidth = Math.round(Dimensions.get("window").width);
 
 const myTxPage = ({ walletId }) => {
@@ -31,7 +33,6 @@ const myTxPage = ({ walletId }) => {
 
   const handlePageChange = (page) => {
     if (0 < page && page <= pages) {
-      console.log(pages)
       setTxs({ ...txs, currentPage: page });
     }
   }
@@ -52,7 +53,7 @@ const myTxPage = ({ walletId }) => {
     }
     
     if (addrRes.success) setAddresses(addrRes.data)
-    setTxs({ ...txs, data: txs.data.filter((v) => v.confirmations).sort((a, b) => b.time - a.time) })
+    setTxs({ ...txs, data: txs.data.sort((a, b) => b.time - a.time) })
 
     setIsLoading(false);
   }
@@ -62,14 +63,29 @@ const myTxPage = ({ walletId }) => {
     setInterval(fetchData, 10000);
   }, [])
 
+  LogBox.ignoreAllLogs();
+
   if (txs.data.length == 0) {
     return (
       <NativeBaseProvider>
         <View style={{ flexDirection: "row", justifyContent: "space-between", width: screenWidth }}>
-          <Text style={styles.header2}>
-            거래 내역 ({txs.data.length})</Text>
+        <View style={styles.header2}>
+          <Text style={styles.header22}>
+            거래 내역 </Text>
+            </View>
         </View>
-        <Text style={{ alignSelf:"center", paddingTop: "20%", fontFamily: "My", fontSize: 25 }}>거래 내역이 없습니다.</Text>
+        <View style={{ alignSelf:"center", paddingTop: "20%", }}>
+          {!isLoading ? <Text
+          style={{ fontFamily: "My", fontSize: 25}}
+          >
+            거래 내역이 없습니다.</Text> : 
+          <View>
+          <Text
+          style={{ fontFamily: "My", fontSize: 25}}
+          >
+            거래 내역을 불러오는 중입니다. <ActivityIndicator color="orange"/></Text>
+          </View>
+          }</View>
       </NativeBaseProvider>
     );
   }
@@ -77,11 +93,17 @@ const myTxPage = ({ walletId }) => {
   return (
     <NativeBaseProvider>
       <View style={{ flexDirection: "row", justifyContent: "space-between", width: screenWidth }}>
-        <Text style={styles.header2}>
-          거래 내역 ({txs.data.length})</Text>
-        <View style={{ flexDirection: "row" }}>
+
+          <View style={styles.header2}>
+          <Text style={styles.header22}>
+          거래 내역 ({txs.data.length}) </Text>
+            
+            </View>
+
+        
+        <View style={{ flexDirection: "row"}}>
           <IconButton size={30}
-            style={{ paddingTop: "5%" }}
+            style={{ alignSelf:"center" }}
             icon={() => (
               <AntDesign name="left" size={24} color="black" />
             )}
@@ -91,7 +113,7 @@ const myTxPage = ({ walletId }) => {
           />
           <Text style={styles.text1}>{currentPage} / {pages}</Text>
           <IconButton size={30}
-            style={{ paddingTop: "5%" }}
+            style={{ alignSelf:"center" }}
             icon={() => (
               <AntDesign name="right" size={24} color="black" />
             )}
@@ -111,30 +133,51 @@ const myTxPage = ({ walletId }) => {
                     style={{
                       flexDirection: "row",
                       justifyContent: "space-between",
-                      padding: "3%",
                     }}
                   >
-                    <View style={{ flexDirection: "column", width: "20%", justifyContent: "center" }}>
-                      {card.category == "send" &&
+                    <View style={{ flexDirection: "column", width: "20%", justifyContent: "center"}}>
+                      {(card.category == "send" && card.confirmations == "1") &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-made" size={30} color="orange" />
                         </View>
                       }
-                      {card.category == "receive" &&
+                      {(card.category == "send" && card.confirmations == "0") &&
+                        <View style={styles.type}>
+                          <MaterialIcons name="call-made" size={30} color="#BDBDBD" />
+                        </View>
+                      }
+                      {(card.category == "receive" && card.confirmations == "1") &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-received" size={30} color="orange" />
+                        </View>
+                      }
+                      {(card.category == "receive" && card.confirmations == "0") &&
+                        <View style={styles.type}>
+                          <MaterialIcons name="call-received" size={30} color="#BDBDBD" />
                         </View>
                       }
                       <View style={styles.date}>
                         <Text style={{ fontSize: 15, fontFamily: "My", }}>{moment(card.timerecived).format('YYYY.MM.DD')}</Text>
                       </View>
                     </View>
+                    <View style = {{ flexDirection:"column", width:"80%", height:"100%"}}>
                     <View style={styles.address}>
-                      <Text style={{ fontSize: 20, fontFamily: "My", }}>{addresses?.find((v) => v.walletAddress === card.address || v.otherAddresses.includes(card.address))?.explanation || '(등록되지 않은 월렛)'}</Text>
-                      <Text style={{ fontSize: 20, fontFamily: "My", color: "orange" }}>{card.address.substring(0, 10)}...{card.address.substring(38)}</Text>
+                      <Text style={{ fontSize: 20, fontFamily: "My",alignSelf: "flex-start" }}>{addresses?.find((v) => v.walletAddress === card.address || v.otherAddresses.includes(card.address))?.explanation || '(등록되지 않은 월렛)'}</Text>
+                      <Text style={{ fontSize: 20, fontFamily: "My", color: "orange", alignSelf: "flex-start" }}>{card.address.substring(0, 12)}...{card.address.substring(32)}</Text>
                     </View>
+                    <View style={{flexDirection:"row", paddingTop:"2%" }}>
+                      <View style={styles.confirm}>
+    { card.confirmations == "0" &&
+                      <Text style={{ fontSize: 20, fontFamily: "My", alignSelf: "flex-start", }}>확정되지 않은 거래</Text>                
+    }
+    { card.confirmations == "1" &&
+                      <Text style={{ fontSize: 28, fontFamily: "My", alignSelf: "flex-start", }}>확정된 거래</Text>                
+    }
+                      </View>
                     <View style={styles.amount}>
                       <Text style={{ fontSize: 25, fontFamily: "My", alignSelf: "flex-end", }}>{Math.abs(card.amount)} TOL</Text>
+                    </View>
+                    </View>
                     </View>
                   </View>
                 </View>
@@ -156,12 +199,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   header2: {
-    fontSize: 35,
+    flexDirection:"row",
     alignSelf: "flex-start",
     paddingTop: "3%",
     paddingBottom: "3%",
     paddingHorizontal: "6%",
+  },
+  header22: {
     fontFamily: "Mybold",
+    fontSize: 35,
   },
   cardContainer: {
     alignContent: "center",
@@ -170,33 +216,40 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 10,
     borderColor: "black",
+    padding:"3%",
     marginBottom: "2%",
   },
   type: {
-    padding: "2%",
+    
     alignSelf: "center",
   },
   date: {
-    padding: "4%",
+    
     alignSelf: "center",
   },
   address: {
-    paddingLeft: "5%",
     justifyContent: "center",
-    width: "45%",
+    width: "100%",
     backgroundColor: "white",
-    alignItems: "center"
+    alignItems: "center",
+    paddingLeft: "3%"
   },
   amount: {
     paddingRight: "4%",
     justifyContent: "center",
-    width: "35%",
+    width: "50%",
     backgroundColor: "white"
+  },
+  confirm: {
+    paddingRight: "4%",
+    justifyContent: "center",
+    width: "50%",
+    backgroundColor: "white",
+    paddingLeft: "3%",
   },
   text1: {
     fontSize: 20,
-    paddingTop: "6%",
-    paddingBottom: "3%",
+    alignSelf:"center",
     fontFamily: "Mybold",
   },
 });

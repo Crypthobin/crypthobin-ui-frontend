@@ -1,9 +1,11 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Dimensions, TextInput, Image } from "react-native";
+import { Text, View, StyleSheet, Dimensions, TextInput, Image, Alert } from "react-native";
 import { Button, NativeBaseProvider } from "native-base";
 import { callBackend } from "../utils/backend";
 import { ActivityIndicator } from "react-native-paper";
 import AsyncStorageLib from "@react-native-async-storage/async-storage";
+import Toast from 'react-native-easy-toast';
+import { LogBox } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
@@ -15,7 +17,8 @@ export default class App extends Component {
     this.state = {
       user: {},
       wallet_name: "",
-      isLoading: false
+      isLoading: false,
+      toast:"",
     };
   }
 
@@ -26,7 +29,7 @@ export default class App extends Component {
       wallet_name: this.state.wallet_name,
     };
     if (!user.wallet_name) {
-      alert("지갑 이름을 입력해주세요.");
+      Alert.alert("","지갑 이름을 입력해 주세요.",[{text:"확인"}]);
       this.setState({ isLoading: false });
       return;
     }
@@ -46,15 +49,18 @@ export default class App extends Component {
     })
 
     if (createWalletRes.error) {
-      alert('월렛 생성에 문제가 발생하였습니다. 다시 시도해 주세요.') 
+      Alert.alert("","월렛 생성에 문제가 발생하였습니다. 다시 시도해 주세요.",[{text:"확인"}]);
       this.setState({ isLoading: false });
       return
     }
 
-    this.props.navigation.navigate("After");
+   // this.toast.show('회원가입 완료');
+   // this.setState({ isLoading: false });
+    this.props.navigation.navigate("Login");
   }
 
   render() {
+    LogBox.ignoreAllLogs();
     return (
       <NativeBaseProvider>
         <View style={styles.container}>
@@ -65,7 +71,7 @@ export default class App extends Component {
           >
             <Text style={styles.title}>밥그릇 회원가입 ( 2 / 2 )</Text>
           </View>
-          <Text style={styles.title2}>지갑 이름을 정해주세요.</Text>
+          <Text style={styles.title2}>지갑 이름을 정해주세요. (14자 이하)</Text>
           <View style={styles.formArea}>
             <TextInput
               style={styles.textForm}
@@ -78,17 +84,35 @@ export default class App extends Component {
               }}
             />
           </View>
+          
+          {this.state.isLoading && <Text
+            style={{ alignSelf:"center", fontSize: 20, color:"black", fontFamily:"My"}}
+            > 지갑 생성 중 .. <ActivityIndicator  color="orange"
+            /></Text>}
+          {!this.state.isLoading &&
           <Button
             block
             style={styles.register_btn}
             onPress={this.handleSubmit.bind(this)}
           >
-            {this.state.isLoading && <ActivityIndicator />}
-            {!this.state.isLoading &&
               <Text style={styles.registerText}>
                 가입하기
-              </Text>}
+              </Text>
           </Button>
+  }
+
+
+<Toast ref={(toast) => this.toast = toast}
+            
+            positionValue={screenHeight*0.5}
+             fadeInDuration={200}
+             fadeOutDuration={1000}
+             style={{backgroundColor:'rgba(0, 0, 0, 0.7)'}}
+             textStyle={{fontFamily:"My", color:"white", fontSize:20}}
+            
+            />
+
+
         </View>
       </NativeBaseProvider>
     );
@@ -97,9 +121,11 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: screenWidth,
     height: screenHeight,
     backgroundColor: "white",
+    position: 'absolute',
   },
   title: {
     fontSize: 25,
@@ -124,8 +150,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   textForm: {
-    width: '70%',
-    height: '40%',
+    width: "70%",
+    height: "40%",
     paddingLeft: "5%",
     paddingRight: "5%",
     marginBottom: "5%",

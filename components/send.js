@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity, Alert } from "react-native";
 import { NativeBaseProvider } from 'native-base';
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -9,9 +9,56 @@ import Modal from 'react-native-simple-modal';
 import Checkbox from 'expo-checkbox';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { callBackend } from "../utils/backend";
+import { justifyContent, right, width } from "styled-system";
+import { LogBox } from 'react-native';
 
 const screenWidth = Math.round(Dimensions.get("window").width);
 const screenHeight = Math.round(Dimensions.get("window").height);
+
+const send_value = /^[0-9]+[.][0-9]*[1-9]$|^[0-9]*[1-9]+[0]*$|^[0]+[.][0-9]*[1-9]$|(^[0-9]+[.][0-9]*[1-9]+[0]+)$|^[0-9]*[1-9]+[0-9]*[.][0]+$/;
+
+function isInt(n){
+  return Number(n) === n && n % 1 === 0;
+}
+
+function isFloat(n){
+  return Number(n) === n && n % 1 !== 0;
+}
+
+function calc(arr){
+  var decimalN = 0; 
+
+  for(var j=0; j<arr.length; j++ ){
+    
+    var n = arr[j]; 
+   
+     if ( !isInt(n) && !isFloat(n) ){
+       return("오류");
+     }
+
+     if(!Number.isInteger(n)){ 
+       var d = String(n).split('.')[1].length; 
+       if(decimalN < d) decimalN = d; 
+      } 
+    } 
+    //return decimalN;
+    var res = parseFloat(arr[0]-arr[1]).toFixed(decimalN);
+    return res;
+  }
+
+ function search(str) {
+  var count = 0;
+  var searchChar = '.'; 
+  var pos = str.indexOf(searchChar);
+
+  while (pos !== -1) {
+    count++;
+    pos = str.indexOf(searchChar, pos + 1);
+  }
+
+  return count;
+   
+ }
 
 export default class App extends Component {
   constructor(props) {
@@ -26,7 +73,8 @@ export default class App extends Component {
       open: false,
       select: false,
       isLoading: true,
-      pickerData: []
+      pickerData: [],
+      picker_value: 0,
     };
 
     this.fetchData()
@@ -58,17 +106,23 @@ export default class App extends Component {
       balance: this.state.balance
     };
     if (!send.address || !send.amount) {
-      alert("모두 입력해주세요.");
+      Alert.alert("","주소와 금액을 정확히 입력해 주세요.",[{text:"확인"}]);
       return;
     }
-    if (send.address.length != 43) {
-      alert("올바른 주소를 입력해주세요.");
+    if (send.address.length != 43  || !(/pqc/).test(this.state.address)) {
+      Alert.alert("","올바른 주소를 입력해 주세요.\n(43자리)",[{text:"확인"}]);
       return;
     }
-    if (send.balance-send.amount < 0) {
-      alert("송금액은 내 잔액을 초과할 수 없습니다.");
+    if (send.balance < 0) {
+      Alert.alert("잔액 부족","송금액은 내 잔액을 초과할 수 없습니다.",[{text:"확인"}]);
       return;
     }
+
+    if (!send_value.test(this.state.amount)) {
+      Alert.alert("송금액 형식 오류","송금액을 다시 한 번 확인해 주세요.\n(0TOL 송금 불가능)",[{text:"확인"}]);
+      return;
+    }
+
     if (this.state.select == true) {
       this.state.name = "(저장되지 않은 주소)";
     }
@@ -79,20 +133,26 @@ export default class App extends Component {
     // 송금 프로세스
     const sendRes = await callBackend('POST', `/api/wallets/${this.state.walletId}/remittance`, {
       to: this.state.address,
-      amount: parseInt(this.state.amount)
+      amount: parseFloat(this.state.amount)
     })
 
     if (!sendRes.success) {
-      alert(`예상치 못한 오류: ${sendRes.message}\nfee를 낼수 있는 금액인지 확인해 보세요.`)
+      //alert(`예상치 못한 오류: ${sendRes.message}\n수수료를 낼수 있는 금액인지 확인해 보세요.`)
+      Alert.alert("송금 실패",`${sendRes.message}\n수수료를 낼 수 있는 금액인지 확인해 보세요.`,[{text:"확인"}]);
       return
     }
 
     // 모달 창 닫기
     this.setState({ open: false, amount: 0 });
-    alert("송금이 완료되었습니다.");
+    this.setState({ address: "" });
+    this.setState({ amount: 0 });
+    this.setState({ select: false });
+    Alert.alert("","송금 완료 !",[{text:"확인"}]);
   };
 
   render() {
+    LogBox.ignoreAllLogs();
+
     const placeholder = {
       label: '주소를 선택해주세요.',
       value: null,
@@ -123,18 +183,26 @@ export default class App extends Component {
             송금하기</Text>
           <View style={styles.formArea}>
             <View style={{ flexDirection: "row", paddingBottom: "3%" }}>
-              <Text style={styles.header3}>
+              <Text style={styles.header33}>
                 보낼 주소</Text>
+                <View style={{ flexDirection: "row", width:"40%", justifyContent:"flex-end"}}>
               <Checkbox
-                style={{ marginRight: "2%", marginTop: "1%", marginLeft: "20%" }}
                 value={this.state.select}
-                onValueChange={() => this.setState({ select: !this.state.select })}
+                onValueChange={() => {this.setState({ select: !this.state.select })
+                this.setState({ address: ""  })}}
                 color={this.state.select ? 'orange' : undefined}
+                style={{alignSelf:"center"}}
               />
-              <Text onPress={() => this.setState({ select: !this.state.select })} style={{ fontFamily: "My", fontSize: 20, marginTop: "0.5%", }}>직접 입력</Text>
+              <Text onPress={() => {
+            this.setState({ address: ""  })
+            this.setState({ select: !this.state.select })
+            }
+            } style={{ alignSelf:"center", paddingLeft:"10%", fontFamily: "My", fontSize: 20 }}>직접 입력</Text>
+              </View>
             </View>
             {this.state.select &&
               <TextInput
+                value={this.state.address}
                 style={styles.textForm}
                 placeholder={"ex) pqc1qyau3w0qkv4v3rla6fq5enjy4yhs23mrhyw7sde"}
                 returnKeyType="done"
@@ -159,8 +227,8 @@ export default class App extends Component {
                 style={{
                   ...pickerSelectStyles,
                   iconContainer: {
-                    top: "15%",
-                    right: "13%",
+                    top:"15%",
+                    right:"2%",
                   },
                 }}
                 value={this.state.address}
@@ -175,12 +243,14 @@ export default class App extends Component {
                 보낼 금액 (단위: TOL)</Text>
             </View>
             <TextInput
+              value={this.state.amount}
               style={styles.textForm}
               placeholder={"ex) 30"}
+              maxLength={10}
               returnKeyType="done"
               keyboardType="number-pad"
               onChangeText={amount => {
-                if (amount == "") {
+                if (amount == "" || search(amount) > 1 ) { // 혹은 .이 여러번 들어가면
                   this.setState({ amount: 0 });
                 } else {
                   this.setState({ amount });
@@ -188,24 +258,26 @@ export default class App extends Component {
               }
               }
             />
+            <View
+            style={{alignSelf: "flex-end",
+            marginTop: "5%",
+            paddingTop: "3%",
+            paddingBottom: "5%",
+            }}
+            >
             <Text style={(this.state.balance - this.state.amount < 0) ? {
               color: "red", fontSize: 22,
-              alignSelf: "flex-end",
-              marginTop: "5%",
-              paddingTop: "3%",
-              paddingBottom: "5%",
-              paddingHorizontal: "10%",
               fontFamily: "Mybold",
             } : {
               color: "orange", fontSize: 22,
-              alignSelf: "flex-end",
-              marginTop: "5%",
-              paddingTop: "3%",
-              paddingBottom: "5%",
-              paddingHorizontal: "10%",
               fontFamily: "Mybold",
             }
-            }>(송금 후 잔액: {this.state.balance-this.state.amount ?? <ActivityIndicator />} TOL)</Text>
+            }>(송금 후 잔액: {this.state.isLoading ? <ActivityIndicator color="orange"
+            size={15}
+            /> :   calc([parseFloat(this.state.balance),parseFloat(this.state.amount)])
+            } TOL)</Text>
+            </View>
+            
           </View>
           <View style={styles.buttonArea}>
             <IconButton size={50}
@@ -225,46 +297,60 @@ export default class App extends Component {
           modalDidClose={() => this.setState({ open: false })}
           modalStyle={styles.modal}
         >
-          {(this.state.name != "(저장되지 않은 주소)") &&
-            <View style={{ paddingBottom: "3%" }}>
-            </View>
-          }
-          <View style={{ paddingBottom: "5%" }}>
-            <FontAwesome5 name="coins" size={60} color="orange" />
+          
+          <View style={{ 
+            height:"30%",
+            justifyContent:"center"
+           }}>
+            <FontAwesome5 name="coins" size={60} color="orange"
+            style={{alignSelf:"center"}} />
           </View>
-          {(this.state.name != "(저장되지 않은 주소)") &&
-            <View style={{ paddingBottom: "3%" }}>
-            </View>
-          }
+          
+          <View style={{ 
+            height:"10%"
+           }}>
           <Text style={styles.header7}>{this.state.name}님께</Text>
-          {(this.state.name == "(저장되지 않은 주소)") &&
-            <View style={{ backgroundColor: "#FFE5CC", borderRadius: 5, marginVertical: "3%" }}>
+          </View>
+
+
+         
+            <View style={{ height: "15%", width:"100%"  }}>
               <Text style={styles.header6}>{this.state.address}</Text>
             </View>
-          }
+
+<View style={{ 
+            height:"10%"
+           }}>
           <Text style={styles.header7}>{this.state.amount} TOL을 송금하시겠습니까?</Text>
-          {(this.state.name != "(저장되지 않은 주소)") &&
-            <View style={{ paddingBottom: "5%" }}>
-            </View>
-          }
+          </View>
+
+  
+          <View style={{ 
+            height:"15%"
+           }}>
           <Text style={styles.header8}>잘못된 주소일 경우, 거래를 되돌릴 수 없습니다.</Text>
-          {(this.state.name != "(저장되지 않은 주소)") &&
-            <View style={{ paddingBottom: "5%" }}>
-            </View>
-          }
-          <View style={{ flexDirection: "column", alignSelf: "center" }}>
-            <View >
+          
+          </View>
+
+          <View style={{ height:"20%",flexDirection: "column", alignSelf: "center",
+         width:"100%"}}>
+            
+            <View 
+            style={{height:"50%", justifyContent:"center"}}
+            >
               <TouchableOpacity
                 onPress={() => this.setState({ open: false })}>
                 <Text style={styles.small_text2}>돌아가기</Text>
               </TouchableOpacity>
             </View>
+
             <View style={styles.small_btn}>
               <TouchableOpacity
                 onPress={this.onSend.bind(this)}>
                 <Text style={styles.small_text}>송금하기</Text>
               </TouchableOpacity>
             </View>
+
           </View>
         </Modal>
       </NativeBaseProvider>
@@ -274,10 +360,13 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: screenWidth,
-    height: screenHeight,
+    height: screenHeight - 60,
     alignItems: "center",
     backgroundColor: "white",
+    paddingTop: Platform.OS === `ios` ? 0 : 10 ,
+    position:"absolute"
   },
   header: {
     width: screenWidth,
@@ -299,8 +388,7 @@ const styles = StyleSheet.create({
   },
   logoText: {
     textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 28,
+    fontSize: 35,
     color: "black",
     fontFamily: "Mybold",
     paddingLeft: "6%",
@@ -319,8 +407,14 @@ const styles = StyleSheet.create({
   header3: {
     fontSize: 25,
     alignSelf: "flex-start",
-    paddingHorizontal: "10%",
     fontFamily: "My",
+    width:"100%"
+  },
+  header33: {
+    fontSize: 25,
+    alignSelf: "flex-start",
+    fontFamily: "My",
+    width:"60%"
   },
   header9: {
     fontSize: 30,
@@ -355,8 +449,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: "90%",
     height: "62%",
-    padding: "5%",
-    paddingTop: "10%",
+    position:"absolute",
+
     backgroundColor: "white",
     borderRadius: 15,
   },
@@ -371,10 +465,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: "center",
     alignSelf: "center",
-    width: "100%",
+    width: "80%",
     fontFamily: "Mybold",
     color: "black",
-    padding: "3%"
+    padding: "3%",
+    backgroundColor: "#FFE5CC",
+    borderRadius: 5,
   },
   header7: {
     fontSize: 25,
@@ -385,8 +481,6 @@ const styles = StyleSheet.create({
   header8: {
     fontSize: 17,
     alignSelf: "center",
-    paddingTop: "3%",
-    paddingBottom: "7%",
     fontFamily: "My",
     color: "orange"
   },
@@ -399,7 +493,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   formArea: {
-    width: "80%",
+    width: "65%",
     height: "40%",
     marginTop: "10%",
     paddingBottom: '5%',
@@ -408,7 +502,7 @@ const styles = StyleSheet.create({
   textForm: {
     borderWidth: 2,
     borderRadius: 5,
-    width: '80%',
+    width: '100%',
     height: 45,
     paddingLeft: "5%",
     alignSelf: "center",
@@ -433,12 +527,13 @@ const styles = StyleSheet.create({
   },
   small_btn: {
     alignSelf: "center",
-    marginTop: "5%",
-    padding: "2%",
-    paddingHorizontal: "20%",
+    height:"50%",
     fontSize: 25,
     backgroundColor: "orange",
     borderRadius: 5,
+    width:"50%",
+    textAlign:"center",
+    justifyContent:"center"
   },
   small_text: {
     alignSelf: "center",
@@ -451,7 +546,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontFamily: "Mybold",
     color: "black",
-    textDecorationLine: "underline"
+    textDecorationLine: "underline",
   }
 });
 
@@ -460,7 +555,7 @@ const pickerSelectStyles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 18,
     fontFamily: "My",
-    width: '80%',
+    width: '100%',
     height: 45,
     borderWidth: 2,
     borderColor: 'black',
@@ -473,7 +568,7 @@ const pickerSelectStyles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 18,
     fontFamily: "My",
-    width: '80%',
+    width: '100%',
     height: 45,
     borderWidth: 2,
     borderColor: 'black',
