@@ -19,14 +19,14 @@ const screenWidth = Math.round(Dimensions.get("window").width);
 const myTxPage = ({ walletId }) => {
   const [txs, setTxs] = useState({
     data: [],
-    pageSize: 10,
-    currentPage: 1,
+    pageSize: 10
   });
 
   const [isLoading, setIsLoading] = useState(true);
 
   const { data, pageSize, currentPage } = txs;
-  const pagedTxs = paginate(data, currentPage, pageSize);
+  const [page, setPage] = useState(1);
+  const pagedTxs = paginate(data, page, pageSize);
   const length = txs.data.length;
   const pageCount = Math.ceil(length / pageSize);
   const pages = pageCount;
@@ -34,7 +34,7 @@ const myTxPage = ({ walletId }) => {
 
   const handlePageChange = (page) => {
     if (0 < page && page <= pages) {
-      setTxs({ ...txs, currentPage: page });
+      setPage(page);
     }
   }
 
@@ -109,17 +109,17 @@ const myTxPage = ({ walletId }) => {
               <AntDesign name="left" size={24} color="black" />
             )}
             onPress={() => {
-              handlePageChange(currentPage - 1)
+              handlePageChange(page - 1)
             }}
           />
-          <Text style={styles.text1}>{currentPage} / {pages}</Text>
+          <Text style={styles.text1}>{page} / {pages}</Text>
           <IconButton size={30}
             style={{ alignSelf:"center" }}
             icon={() => (
               <AntDesign name="right" size={24} color="black" />
             )}
             onPress={() => {
-              handlePageChange(currentPage + 1)
+              handlePageChange(page + 1)
             }}
           />
         </View>
@@ -137,12 +137,12 @@ const myTxPage = ({ walletId }) => {
                     }}
                   >
                     <View style={{ flexDirection: "column", width: "20%", justifyContent: "center"}}>
-                      {(card.category == "send" && card.confirmations == "1") &&
+                      {(card.category == "send" && card.confirmations > 0) &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-made" size={30} color="orange" />
                         </View>
                       }
-                      {(card.category == "send" && card.confirmations == "0") &&
+                      {(card.category == "send" && card.confirmations < 1) &&
                         <View style={styles.type}>
                           <MaterialIcons name="call-made" size={30} color="#BDBDBD" />
                         </View>
