@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     height: screenHeight - 60,
     alignItems: "center",
     backgroundColor: "white",
-    paddingTop: Platform.OS === `ios` ? 0 : 10 ,
+    paddingTop: Platform.OS === `ios` ? 0 : 12 ,
   },
   container2: {
     width: "90%",

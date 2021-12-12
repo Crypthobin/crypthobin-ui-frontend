@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
    // position: "absolute",
-   paddingTop: Platform.OS === `ios` ? 0 : 10 ,
+   paddingTop: Platform.OS === `ios` ? 0 : 12 ,
   },
   header: {
     width: screenWidth,
