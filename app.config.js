@@ -2,8 +2,8 @@ import 'dotenv/config'
 
 export default {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "밥그릇",
+    "slug": "bobqurut",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,13 +22,11 @@ export default {
       "supportsTablet": true
     },
     "android": {
+      "package": "com.pqbobtol.wallet",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#FFFFFF"
       }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     },
     "extra": {
       "BACKEND_URL": process.env.BACKEND_URL || 'https://crypto.pmh.codes'
